@@ -69,18 +69,20 @@ def ZMuMu_MuSelection(df):
     return df
 
     
-def CleanJets(df):
+def CleanJets(df, JEC):
     # List of cleaned jets (noise cleaning + lepton/photon overlap removal)
     df = df.Define('_jetPassID', 'Jet_jetId>=6')
 
+    # Apply (or not) the newest Jet Energy Corrections: Note Jet_pt is the corrected pt but not with the latest JECs
+    # Based on the JEC flag we have the raw jet pT (JEC=False) or the re-corrected jet pT (JEC=True)
+    df = df.Redefine('Jet_pt', 'JetRawPt(Jet_pt, Jet_rawFactor)')
+    if JEC:
+       df = df.Redefine('Jet_pt', 'JetCorPt(Jet_area, Jet_eta, Jet_pt, Jet_rawFactor, Rho_fixedGridRhoFastjetAll)')
+ 
     # Next line to make sure we remove the leptons/the photon
-    # TODO: Make a flag to run on raw or corrected jet pt
-    # Corrected jet pt
-    df = df.Define('Jet_ptCor', 'JetEnergyCorrections(Jet_area, Jet_eta, Jet_pt, Rho_fixedGridRhoAll)')
-    df = df.Define('isCleanJet_corPt','_jetPassID&&(Jet_ptCor>30||(Jet_ptCor>20&&abs(Jet_eta)<2.4))&&Jet_muEF<0.5&&Jet_chEmEF<0.5&&Jet_neEmEF<0.8')
-
-    # Raw jet pt
     df = df.Define('isCleanJet','_jetPassID&&(Jet_pt>30||(Jet_pt>20&&abs(Jet_eta)<2.4))&&Jet_muEF<0.5&&Jet_chEmEF<0.5&&Jet_neEmEF<0.8')
+
+    # Get the jet variables
     df = df.Define('cleanJet_Pt','Jet_pt[isCleanJet]')
     df = df.Define('cleanJet_Eta','Jet_eta[isCleanJet]')
     df = df.Define('cleanJet_Phi','Jet_phi[isCleanJet]')

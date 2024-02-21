@@ -21,7 +21,8 @@ def main():
         ''',
         usage='use "%(prog)s --help" for more information',
         formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument("--max_events",    dest="max_events", help="Maximum number of events to analyze. Default=-1 i.e. run on all events.", type=int, default=-1)
+    parser.add_argument("--max_events",    dest="max_events", help="Maximum number of events to analyze. Default=-1 i.e. run on all events.", type=int,  default=-1)
+    parser.add_argument("--JEC",           dest="JEC",        help="Apply the newest Jet Energy Corrections. When not added the jet raw pt is used", action='store_true')
     parser.add_argument("-i", "--input",   dest="inputFile",  help="Input file", type=str, default='')
     parser.add_argument("-o", "--output",  dest="outputFile", help="Output file", type=str, default='')
     parser.add_argument("-c", "--channel", dest="channel",    help=
@@ -88,7 +89,7 @@ def main():
            
         df = SinglePhotonSelection(df, triggers) 
         
-        df = CleanJets(df)
+        df = CleanJets(df, args.JEC)
         
         df = PtBalanceSelection(df)
         

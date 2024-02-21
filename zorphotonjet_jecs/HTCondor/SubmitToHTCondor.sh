@@ -1,9 +1,8 @@
 #!/bin/bash                                                           
 
 # Set the paths below according to your needs:
-swpath=/user/${USER}/JEC/CMSSW_12_6_5/src              # To be used only for cms environment setup
-jobpath=JobSub                                         # New directory to be created for the submission
-subpath=${PWD}/${jobpath}                              # Path to be used for submission of jobs to HTCondor
+jobpath=JobSub                                         # New directory to be created for the submission files
+subpath=${PWD}/${jobpath}                              # Path to be used for the submission files of jobs to HTCondor
 
 # Color variables for message and error printing
 RED='\033[0;31m'

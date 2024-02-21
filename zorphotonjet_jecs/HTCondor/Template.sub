@@ -28,7 +28,7 @@ arguments                       = $(filename) path_to_output/output_$(ClusterId)
 # Output files to the submit machine (Default is ON_EXIT) #
 # ON_SUCCESS means if the success_exit_code=0             #
 ###########################################################
-# should_transfer_files = no
+# should_transfer_files = yes
 # when_to_transfer_output       = ON_SUCCESS
 # when_to_transfer_output       = ON_EXIT
 
