@@ -26,7 +26,7 @@ The [SubmitToHTCondor.sh](SubmitToHTCondor.sh) script proceeds as follows:
    - [Template.sub](Template.sub) is the submission file as this would be submitted with ```condor_submit```
    - [Template.sh](Template.sh) is the executable script which runs the analysis ```python3 ...```
 3. It creates 2 new scripts (based on the templates) with the input dataset(s), path configuration etc.
-4. It creates a sub-directory ```JobSub``` (within HTCondor directory) which is used as submission directory.  
+4. It creates a sub-directory ```JobSub``` (within HTCondor directory) which is used to put the submission files.  
    The ```JobSub``` directory holds the 2 new scripts, along with directories for job progress reporting:
    - error
    - log
