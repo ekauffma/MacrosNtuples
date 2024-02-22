@@ -93,7 +93,7 @@ def main():
         
         df = PtBalanceSelection(df)
         
-        df, all_histos_balance = AnalyzePtBalance(df)
+        df, all_histos_balance = AnalyzePtBalance(df, args.JEC)
         
         df_report = df.Report()
         

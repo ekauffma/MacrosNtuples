@@ -114,9 +114,13 @@ def PtBalanceSelection(df):
     return df
 
 
-def AnalyzePtBalance(df, suffix = ''):
+def AnalyzePtBalance(df, JEC):
     histos = {}                                 # Dictionary for histograms (one histo per eta, alpha and ref_Pt)
     df_ptBalanceBinnedInEtaAndAlphaPerPt = {}   # RDataFrame for filtering on eta, alpha and ref_Pt bins
+
+    suffix = '_rawPt'
+    if JEC:
+       suffix = '_corPt'
 
     # Loop over eta bins
     for e in range(NetaBins):
