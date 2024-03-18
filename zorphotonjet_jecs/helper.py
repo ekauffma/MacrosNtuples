@@ -6,11 +6,29 @@ from trigger import *
 from binning import *
 from corrections import *
 
+# C++ function to find the index of the leading pt jet
+ROOT.gInterpreter.Declare('''
+inline int FindLeadingIndex(const ROOT::VecOps::RVec<float> &pt){
+
+    int index = 0;
+    double max = pt[0];
+    for(unsigned int i=0; i<pt.size(); i++){
+       if(pt[i] > max){
+          max = pt[i];
+          index = i;
+       }
+    }
+
+    return index;
+
+}
+''')
 
 ## C++ function for alpha calculation
 ROOT.gInterpreter.Declare('''
-inline float Alpha_func(const ROOT::VecOps::RVec<float> &pt_jet, const float pt_ref){
+inline float Alpha_func(ROOT::VecOps::RVec<float> &pt_jet, const float pt_ref){
 
+      sort(pt_jet.begin(), pt_jet.end());
       return pt_jet.size()>1 ? pt_jet[1]/pt_ref : 0.0;
 
 }
@@ -75,12 +93,17 @@ def CleanJets(df, JEC):
 
     # Apply (or not) the newest Jet Energy Corrections: Note Jet_pt is the corrected pt but not with the latest JECs
     # Based on the JEC flag we have the raw jet pT (JEC=False) or the re-corrected jet pT (JEC=True)
+    # After refinition of the column, jets are not yet ordered in pt
     df = df.Redefine('Jet_pt', 'JetRawPt(Jet_pt, Jet_rawFactor)')
     if JEC:
        df = df.Redefine('Jet_pt', 'JetCorPt(Jet_area, Jet_eta, Jet_pt, Jet_rawFactor, Rho_fixedGridRhoFastjetAll)')
  
     # Next line to make sure we remove the leptons/the photon
     df = df.Define('isCleanJet','_jetPassID&&(Jet_pt>30||(Jet_pt>20&&abs(Jet_eta)<2.4))&&Jet_muEF<0.5&&Jet_chEmEF<0.5&&Jet_neEmEF<0.8')
+
+    # Next line to find the leading pt jet in the jet list
+    # Note: we do not use sort, since we use Pt, Eta and Phi from the leading jet
+    df = df.Define('leading_jet', 'FindLeadingIndex(Jet_pt)')
 
     # Get the jet variables
     df = df.Define('cleanJet_Pt','Jet_pt[isCleanJet]')
@@ -101,14 +124,15 @@ def PtBalanceSelection(df):
     ref can be a photon or a Z.
     '''
     # Back to back condition
-    df = df.Filter('abs(acos(cos(ref_Phi-cleanJet_Phi[0])))>2.9','DeltaPhi(ph,jet)>2.9')
+    df = df.Filter('abs(acos(cos(ref_Phi-cleanJet_Phi[leading_jet])))>2.9','DeltaPhi(ph,jet)>2.9')
 
     # Compute Pt balance = pt(jet)/pt(ref)    
-    df = df.Define('ptbalance','cleanJet_Pt[0]/ref_Pt')
-    df = df.Define('probe_Eta','cleanJet_Eta[0]') 
-    df = df.Define('probe_Phi','cleanJet_Phi[0]')
+    df = df.Define('ptbalance','cleanJet_Pt[leading_jet]/ref_Pt')
+    df = df.Define('probe_Eta','cleanJet_Eta[leading_jet]')
+    df = df.Define('probe_Phi','cleanJet_Phi[leading_jet]')
 
     # Compute alpha=pt(subleading_jet)/pt(ref) using the Alpha_func
+    # Sort the jet pts (for sub_leading jet we only need the pt) and take the sub-leading
     df = df.Define('alpha','Alpha_func(cleanJet_Pt_noPtcut,ref_Pt)')
 
     return df

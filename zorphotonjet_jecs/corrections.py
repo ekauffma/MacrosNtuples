@@ -35,6 +35,7 @@ ROOT::VecOps::RVec<float> JetCorPt(const ROOT::VecOps::RVec<float> &area,
     ROOT::VecOps::RVec<float> Jet_corPt;
 
     for(unsigned int i=0; i<pt.size(); i++){
+       //std::cout << "Raw pt is: " << pt[i] << "\t\t";
        float sf = cset->at("Summer22_22Sep2023_RunCD_V2_DATA_L1FastJet_AK4PFPuppi")->evaluate({area[i], eta[i], pt[i], rho});
        sf *= cset->at("Summer22_22Sep2023_RunCD_V2_DATA_L2Relative_AK4PFPuppi")->evaluate({eta[i], pt[i]});
        sf *= cset->at("Summer22_22Sep2023_RunCD_V2_DATA_L3Absolute_AK4PFPuppi")->evaluate({eta[i], pt[i]});
