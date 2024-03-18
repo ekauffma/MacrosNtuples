@@ -101,15 +101,15 @@ def CleanJets(df, JEC):
     # Next line to make sure we remove the leptons/the photon
     df = df.Define('isCleanJet','_jetPassID&&(Jet_pt>30||(Jet_pt>20&&abs(Jet_eta)<2.4))&&Jet_muEF<0.5&&Jet_chEmEF<0.5&&Jet_neEmEF<0.8')
 
-    # Next line to find the leading pt jet in the jet list
-    # Note: we do not use sort, since we use Pt, Eta and Phi from the leading jet
-    df = df.Define('leading_jet', 'FindLeadingIndex(Jet_pt)')
-
     # Get the jet variables
     df = df.Define('cleanJet_Pt','Jet_pt[isCleanJet]')
     df = df.Define('cleanJet_Eta','Jet_eta[isCleanJet]')
     df = df.Define('cleanJet_Phi','Jet_phi[isCleanJet]')
     df = df.Filter('Sum(isCleanJet)>=1','>=1 clean jet with p_{T}>20/30 GeV')
+
+    # Next line to find the leading pt jet in the jet list
+    # Note: we do not use sort, since we use Pt, Eta and Phi from the leading jet
+    df = df.Define('leading_jet', 'FindLeadingIndex(cleanJet_Pt)')
 
     # For the subleading jet (alpha calculation) we do not apply any pt cut
     df = df.Define('isCleanJet_noPtcut','_jetPassID&&Jet_muEF<0.5&&Jet_chEmEF<0.5&&Jet_neEmEF<0.8')
@@ -154,7 +154,7 @@ def AnalyzePtBalance(df, JEC):
             for p in range(NptBins):
                 # Filtering on eta, alpha and pt bins
                 key = '_' + str_binetas[e] + '_' + str_binalphas[a] + '_' + str_binpts[p]
-                df_ptBalanceBinnedInEtaAndAlphaPerPt[key] = df.Filter('abs(cleanJet_Eta[0])>={}&&abs(cleanJet_Eta[0])<{}'.format(jetetaBins[e], jetetaBins[e+1]))\
+                df_ptBalanceBinnedInEtaAndAlphaPerPt[key] = df.Filter('abs(cleanJet_Eta[leading_jet])>={}&&abs(cleanJet_Eta[leading_jet])<{}'.format(jetetaBins[e], jetetaBins[e+1]))\
                                                               .Filter('alpha>={}&&alpha<{}'.format(alphaBins[a], alphaBins[a+1]))\
                                                               .Filter('ref_Pt>={}&&ref_Pt<{}'.format(jetptBins[p], jetptBins[p+1]))
 
