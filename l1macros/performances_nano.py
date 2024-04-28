@@ -12,7 +12,6 @@ ROOT.gInterpreter.Declare('#include "../helpers/Helper_InvariantMass.h"')
 #Importing stuff from other python files
 sys.path.insert(0, '../helpers')
 
-#from helper_nano import * 
 import helper_nano as h
 
 
@@ -34,7 +33,9 @@ def main():
                         -DiJet: For L1 jet studies with events triggered with a SingleJet trigger
                         -MuonJet: For L1 jet studies with events trigger with a SingleMuon trigger
                         -ZToMuMu: For L1 muon studies with Z->mumu
-                        -ZToEE: For L1 EG studies with Z->ee''', 
+                        -ZToEE: For L1 EG studies with Z->ee
+                        -ZToTauTau: For L1 Tau studies with Z->tau(mu)tau(h)
+                        ''', 
                         type=str, default='PhotonJet')
     parser.add_argument("--config", dest="config", help="Yaml configuration file to read. Default: full config for that channel.", type=str, default='')
     #parser.add_argument("--plot_nvtx", dest="plot_nvtx", help="Whether to save additional plots in bins of nvtx. Boolean, default = False", type=bool, default=False)
@@ -68,6 +69,8 @@ def main():
             config_file = '../config_cards/full_ZToEE.yaml'
         if args.channel == 'DiJet':
             config_file = '../config_cards/full_DiJet.yaml'
+        elif args.channel == 'ZToTauTau':
+            config_file = '../config_cards/full_ZToTauTau.yaml'
 
     # Read config and set config_dict in helper
     with open(config_file) as s:
@@ -124,7 +127,7 @@ def main():
     out = ROOT.TFile(args.outputFile, "recreate")
     ####The sequence of filters/column definition starts here
     
-    if args.channel not in ['PhotonJet','MuonJet','ZToMuMu','ZToEE', 'DiJet']:
+    if args.channel not in ['PhotonJet','MuonJet','ZToMuMu','ZToEE', 'DiJet', 'ZToTauTau']:
         print("Channel {} does not exist".format(args.channel))
         return 
 
@@ -319,7 +322,7 @@ def main():
         df = h.CleanJets(df)
         all_histos_jets = {}
 
-        df, histos_jets = h.AnalyzeCleanJets(df, 100, 50 )
+        df, histos_jets = h.AnalyzeCleanJets(df, 500, 180 )
         
         df, histos_mjj = h.PrefiringVsMjj(df)
         
@@ -329,6 +332,23 @@ def main():
         for i in histos_mjj:
             histos_mjj[i].GetValue().Write()
             
+    if args.channel == 'ZToTauTau':
+        df = h.ZTauTauSelection(df)
+        
+        # make copies of df for each bin of nvtx (+1 copy of the original)
+        df_list = [df.Filter(nvtx_cut) for nvtx_cut in filter_list]
+        all_histos = {}
+
+        for i, df_element in enumerate(df_list):
+            df_element, histos = h.ZTauTau_Plots(df_element, suffix = suffix_list[i])
+
+            for key, val in histos.items():
+                all_histos[key] = val
+        
+        for i in all_histos:
+            all_histos[i].GetValue().Write()
+
+
     nvtx_histo.GetValue().Write()
 
 if __name__ == '__main__':

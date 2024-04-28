@@ -1,0 +1,10 @@
+Thresholds: [40, 60, 80, 100, 120]
+
+L1TEfficiency: true
+L1TResolution: true
+
+
+PU_plots:
+    # Whether or not to compute the histograms for each bin of nvtx.
+    # this field needs to exist, and must be set to either true or false.
+    make_histos: false

@@ -115,3 +115,10 @@ Assuming you ran the previous step for the ```ZeroBias``` dataset and that your 
 python3  drawplots_l1rate.py -i file.root  --histos HISTONAME_1 HISTONAME_2 ... --hlumis h_lsprocessed_vs_pu --href  h_allevents_vs_pu  -d ZeroBias
 ```
 
+
+## Tests (to run before opening a pull request)
+In ```l1macros``` folder: 
+```
+sh runtests >> log_runtests
+```
+

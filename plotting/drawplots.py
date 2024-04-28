@@ -24,11 +24,13 @@ def main():
     parser.add_argument("--legend", dest="legendlabels", help="Legend labels", nargs='+', type=str, default='')
     parser.add_argument("--extralabel", dest="extralabel", help="Extra label", type=str, default='')
     parser.add_argument("--setlogx", dest="setlogx", help="Set log x", type=bool, default=False)
+    parser.add_argument("--setlogy", dest="setlogy", help="Set log x", type=bool, default=False)
     parser.add_argument("--plotname", dest="plotname", help="Name of the plot", type=str, default='plot')
     parser.add_argument("--h2d", dest="h2d", help="2D histo (for profile etc)", nargs='+',type=str)
     parser.add_argument("--axisranges", dest="axisranges", help="Axis ranges [xmin, xmax, ymin, ymax, zmin, zmax]", nargs='+', type=float, default=[])
     parser.add_argument("--addnumtoden", dest="addnumtoden", help="Add numerator histo to denominator (because it only contains complementary events e.g. failing probes)",type=bool, default=False)
-    parser.add_argument("--saveplot", dest="saveplot", help="Save plots or not",type=bool, default = False)
+    parser.add_argument("--saveplot", dest="saveplot", help="Save plots in .png and .pdf format",type=bool, default = False)
+    parser.add_argument("--saveroot", dest="saveroot", help="Save plots in .root format",type=bool, default = False)
     parser.add_argument("--interactive", dest="interactive", help="Run in interactive mode (keep plot drawn)", type=bool, default=False)
     parser.add_argument("--suffix_files", dest="suffix_files", help="Input files suffix", nargs='+', type=str, default='')
     parser.add_argument("--toplabel", dest="top_label", help="Label to put on top right of plot (for sqrt(s) and lumi values)", type=str, default="")
@@ -40,18 +42,18 @@ def main():
     args = parser.parse_args()
         
     if args.type=='efficiency':
-        makeeff(inputFiles_list = args.inputFiles, den = args.den, num = args.num, addnumtoden = args.addnumtoden, legendlabels = args.legendlabels, xtitle=args.xtitle, ytitle=args.ytitle, ztitle=args.ztitle, extralabel=args.extralabel, setlogx=args.setlogx, plotname=args.plotname, axisranges=args.axisranges, saveplot = args.saveplot, interactive=args.interactive, suffix_files = args.suffix_files, top_label = args.top_label, legend_pos = args.legend_pos, nvtx_suffix = args.nvtx_suffix, dirname = args.dirname)
+        makeeff(inputFiles_list = args.inputFiles, den = args.den, num = args.num, addnumtoden = args.addnumtoden, legendlabels = args.legendlabels, xtitle=args.xtitle, ytitle=args.ytitle, ztitle=args.ztitle, extralabel=args.extralabel, setlogx=args.setlogx, setlogy=args.setlogy, plotname=args.plotname, axisranges=args.axisranges, saveplot=args.saveplot, saveroot=args.saveroot, interactive=args.interactive, suffix_files = args.suffix_files, top_label = args.top_label, legend_pos = args.legend_pos, nvtx_suffix = args.nvtx_suffix, dirname = args.dirname)
             
     if args.type=='profilex_fromh2':
-        makeprof(inputFiles_list = args.inputFiles, h2d = args.h2d, legendlabels = args.legendlabels, xtitle=args.xtitle, ytitle=args.ytitle, ztitle=args.ztitle, extralabel=args.extralabel, setlogx=args.setlogx, plotname=args.plotname, axisranges=args.axisranges, saveplot = args.saveplot, interactive=args.interactive, top_label = args.top_label, legend_pos = args.legend_pos, nvtx_suffix = args.nvtx_suffix, dirname = args.dirname)
+        makeprof(inputFiles_list = args.inputFiles, h2d = args.h2d, legendlabels = args.legendlabels, xtitle=args.xtitle, ytitle=args.ytitle, ztitle=args.ztitle, extralabel=args.extralabel, setlogx=args.setlogx, setlogy=args.setlogy, plotname=args.plotname, axisranges=args.axisranges, saveplot=args.saveplot, saveroot=args.saveroot, interactive=args.interactive, top_label = args.top_label, legend_pos = args.legend_pos, nvtx_suffix = args.nvtx_suffix, dirname = args.dirname)
 
     if args.type=='resolvsx':
-        makeresol(inputFiles_list = args.inputFiles, h2d = args.h2d, legendlabels = args.legendlabels, xtitle=args.xtitle, ytitle='#sigma_{scale corr.}'+args.ytitle, ztitle=args.ztitle, extralabel=args.extralabel, setlogx=args.setlogx, plotname=args.plotname, axisranges=args.axisranges, saveplot = args.saveplot, interactive=args.interactive, top_label = args.top_label, legend_pos = args.legend_pos, nvtx_suffix = args.nvtx_suffix, dirname = args.dirname)
+        makeresol(inputFiles_list = args.inputFiles, h2d = args.h2d, legendlabels = args.legendlabels, xtitle=args.xtitle, ytitle='#sigma_{scale corr.}'+args.ytitle, ztitle=args.ztitle, extralabel=args.extralabel, setlogx=args.setlogx, setlogy=args.setlogy, plotname=args.plotname, axisranges=args.axisranges, saveplot=args.saveplot, saveroot=args.saveroot, interactive=args.interactive, top_label = args.top_label, legend_pos = args.legend_pos, nvtx_suffix = args.nvtx_suffix, dirname = args.dirname)
 
     if args.type=='distribution':
-        makedist(inputFiles_list = args.inputFiles, h1d = args.h1d, legendlabels = args.legendlabels, xtitle=args.xtitle, ytitle=args.ytitle, ztitle=args.ztitle, extralabel=args.extralabel, setlogx=args.setlogx, plotname=args.plotname, axisranges=args.axisranges, saveplot = args.saveplot, interactive=args.interactive, top_label = args.top_label, legend_pos = args.legend_pos, nvtx_suffix = args.nvtx_suffix, dirname = args.dirname)
+        makedist(inputFiles_list = args.inputFiles, h1d = args.h1d, legendlabels = args.legendlabels, xtitle=args.xtitle, ytitle=args.ytitle, ztitle=args.ztitle, extralabel=args.extralabel, setlogx=args.setlogx, setlogy=args.setlogy, plotname=args.plotname, axisranges=args.axisranges, saveplot=args.saveplot, saveroot=args.saveroot, interactive=args.interactive, top_label = args.top_label, legend_pos = args.legend_pos, nvtx_suffix = args.nvtx_suffix, dirname = args.dirname)
 
-def makeeff(inputFiles_list = [], den=[], num=[], addnumtoden=False, legendlabels=[], xtitle='p_{T} (GeV)', ytitle='Number of entries', ztitle='Number of entries', extralabel='', setlogx=False, plotname='plot', axisranges=[], saveplot=False, interactive=False, suffix_files='', top_label='', legend_pos='bottom', nvtx_suffix='', dirname = 'plotsL1Run3'):
+def makeeff(inputFiles_list = [], den=[], num=[], addnumtoden=False, legendlabels=[], xtitle='p_{T} (GeV)', ytitle='Number of entries', ztitle='Number of entries', extralabel='', setlogx=False, setlogy=False, plotname='plot', axisranges=[], saveplot=False, interactive=False, suffix_files='', top_label='', legend_pos='bottom', nvtx_suffix='', dirname = 'plotsL1Run3'):
 
     if interactive == False:
         ROOT.gROOT.SetBatch(1)
@@ -69,6 +71,7 @@ def makeeff(inputFiles_list = [], den=[], num=[], addnumtoden=False, legendlabel
             print("Numerator has {} histos while denominator has {}. Exiting.".format(len(h_nums),len(h_dens)))
             return 
         for i in range(len(num)):
+            print(num[i]+nvtx_suffix)
             h_nums.append(inputFile.Get(num[i]+nvtx_suffix).Clone())
             if len(den)==1:
                 h_dens.append(inputFile.Get(den[0]+nvtx_suffix).Clone())
@@ -77,9 +80,9 @@ def makeeff(inputFiles_list = [], den=[], num=[], addnumtoden=False, legendlabel
             h_nums[i].SetName(h_nums[i].GetName()+"_{}".format(i))
             h_dens[i].SetName(h_dens[i].GetName()+"_{}".format(i))
     effs = compute_eff(h_dens, h_nums, addnumtoden)
-    drawplots(effs, legendlabels = legendlabels, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle, extralabel=extralabel, setlogx=setlogx, plotname=plotname, axisranges=axisranges, saveplot = saveplot, interactive=interactive, suffix_files = suffix_files, top_label = top_label, legend_pos = legend_pos, nvtx_suffix = nvtx_suffix, dirname = dirname)
+    drawplots(effs, legendlabels = legendlabels, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle, extralabel=extralabel, setlogx=setlogx, setlogy=setlogy, plotname=plotname, axisranges=axisranges, saveplot = saveplot, interactive=interactive, suffix_files = suffix_files, top_label = top_label, legend_pos = legend_pos, nvtx_suffix = nvtx_suffix, dirname = dirname)
 
-def makeprof(inputFiles_list = [], h2d=[], legendlabels=[], xtitle='p_{T} (GeV)', ytitle='Number of entries', ztitle='Number of entries', extralabel='', setlogx=False, plotname='plot', axisranges=[], saveplot=False, interactive=False, suffix_files='', top_label='', legend_pos='bottom', nvtx_suffix='', dirname = 'plotsL1Run3'):
+def makeprof(inputFiles_list = [], h2d=[], legendlabels=[], xtitle='p_{T} (GeV)', ytitle='Number of entries', ztitle='Number of entries', extralabel='', setlogx=False, setlogy=False, plotname='plot', axisranges=[], saveplot=False, interactive=False, suffix_files='', top_label='', legend_pos='bottom', nvtx_suffix='', dirname = 'plotsL1Run3'):
 
     if interactive == False:
         ROOT.gROOT.SetBatch(1)
@@ -93,9 +96,9 @@ def makeprof(inputFiles_list = [], h2d=[], legendlabels=[], xtitle='p_{T} (GeV)'
         print(i)
         h2ds.append(inputFiles[0].Get(i+nvtx_suffix).Clone())
     profiles = compute_profilex(h2ds)
-    drawplots(profiles, legendlabels = legendlabels, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle, extralabel=extralabel, setlogx=setlogx, plotname=plotname, axisranges=axisranges, saveplot = saveplot, interactive=interactive, top_label = top_label, legend_pos = legend_pos, nvtx_suffix = nvtx_suffix, dirname = dirname)
+    drawplots(profiles, legendlabels = legendlabels, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle, extralabel=extralabel, setlogx=setlogx, setlogy=setlogy, plotname=plotname, axisranges=axisranges, saveplot = saveplot, interactive=interactive, top_label = top_label, legend_pos = legend_pos, nvtx_suffix = nvtx_suffix, dirname = dirname)
 
-def makeresol(inputFiles_list = [], h2d=[], legendlabels=[], xtitle='p_{T} (GeV)', ytitle='Number of entries', ztitle='Number of entries', extralabel='', setlogx=False, plotname='plot', axisranges=[], saveplot=False, interactive=False, suffix_files='', top_label='', legend_pos='bottom', nvtx_suffix='', dirname = 'plotsL1Run3'):
+def makeresol(inputFiles_list = [], h2d=[], legendlabels=[], xtitle='p_{T} (GeV)', ytitle='Number of entries', ztitle='Number of entries', extralabel='', setlogx=False, setlogy=False, plotname='plot', axisranges=[], saveplot=False, interactive=False, suffix_files='', top_label='', legend_pos='bottom', nvtx_suffix='', dirname = 'plotsL1Run3'):
 
     if interactive == False:
         ROOT.gROOT.SetBatch(1)
@@ -110,12 +113,12 @@ def makeresol(inputFiles_list = [], h2d=[], legendlabels=[], xtitle='p_{T} (GeV)
             h2ds.append(inputFile.Get(h2d[i]+nvtx_suffix).Clone())
             h2ds[i].SetName(h2ds[i].GetName()+"_{}".format(i))
     hresponse, hresol = compute_ResolutionvsX(h2ds)
-    drawplots(hresponse, legendlabels = legendlabels, xtitle=xtitle, ytitle='#mu'+ytitle, ztitle=ztitle, extralabel=extralabel, setlogx=setlogx, plotname='mu_'+plotname, axisranges=axisranges, saveplot = saveplot, interactive=interactive, suffix_files = suffix_files, top_label = top_label, legend_pos = legend_pos, nvtx_suffix = nvtx_suffix, dirname = dirname)
+    drawplots(hresponse, legendlabels = legendlabels, xtitle=xtitle, ytitle='#mu'+ytitle, ztitle=ztitle, extralabel=extralabel, setlogx=setlogx, setlogy=setlogy, plotname='mu_'+plotname, axisranges=axisranges, saveplot = saveplot, interactive=interactive, suffix_files = suffix_files, top_label = top_label, legend_pos = legend_pos, nvtx_suffix = nvtx_suffix, dirname = dirname)
     axisranges[2] = 0
     axisranges[3] = 0.6
-    drawplots(hresol, legendlabels = legendlabels, xtitle=xtitle, ytitle='#sigma_{scale corr.}'+ytitle, ztitle=ztitle, extralabel=extralabel, setlogx=setlogx, plotname='resol_'+plotname, axisranges=axisranges, saveplot = saveplot, interactive=interactive, top_label = top_label, legend_pos = legend_pos, nvtx_suffix = nvtx_suffix, dirname = dirname)
+    drawplots(hresol, legendlabels = legendlabels, xtitle=xtitle, ytitle='#sigma_{scale corr.}'+ytitle, ztitle=ztitle, extralabel=extralabel, setlogx=setlogx, setlogy=setlogy, plotname='resol_'+plotname, axisranges=axisranges, saveplot = saveplot, interactive=interactive, top_label = top_label, legend_pos = legend_pos, nvtx_suffix = nvtx_suffix, dirname = dirname)
 
-def makedist(inputFiles_list = [], h1d=[], legendlabels=[], xtitle='p_{T} (GeV)', ytitle='Number of entries', ztitle='Number of entries', extralabel='', setlogx=False, plotname='plot', axisranges=[], saveplot=False, interactive=False, suffix_files='', top_label='', legend_pos='bottom', nvtx_suffix='', dirname = 'plotsL1Run3'):
+def makedist(inputFiles_list = [], h1d=[], legendlabels=[], xtitle='p_{T} (GeV)', ytitle='Number of entries', ztitle='Number of entries', extralabel='', setlogx=False, setlogy=False, plotname='plot', axisranges=[], saveplot=False, saveroot=False, interactive=False, suffix_files='', top_label='', legend_pos='bottom', nvtx_suffix='', dirname = 'plotsL1Run3'):
 
     if interactive == False:
         ROOT.gROOT.SetBatch(1)
@@ -130,7 +133,7 @@ def makedist(inputFiles_list = [], h1d=[], legendlabels=[], xtitle='p_{T} (GeV)'
         for i in range(len(h1d)):
             h1ds.append(inputFile.Get(h1d[i]+nvtx_suffix).Clone())
             h1ds[i].SetName(h1ds[i].GetName()+"_{}".format(i))
-    drawplots(h1ds, legendlabels = legendlabels, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle, extralabel=extralabel, setlogx=setlogx, plotname=plotname, axisranges=axisranges, saveplot = saveplot, interactive=interactive, top_label = top_label, legend_pos = legend_pos, nvtx_suffix = nvtx_suffix, dirname = dirname)
+    drawplots(h1ds, legendlabels = legendlabels, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle, extralabel=extralabel, setlogx=setlogx, setlogy=setlogy, plotname=plotname, axisranges=axisranges, saveplot = saveplot, interactive=interactive, top_label = top_label, legend_pos = legend_pos, nvtx_suffix = nvtx_suffix, dirname = dirname)
 
 
 def canvas(width=700, height=600, lmargin_frac=0.15, rmargin_frac=0.15):
@@ -142,7 +145,7 @@ def canvas(width=700, height=600, lmargin_frac=0.15, rmargin_frac=0.15):
     return c
 
 
-def drawplots(objs, legendlabels, xtitle='', ytitle='', ztitle='',  extralabel='', setlogx=False, plotname='plot', axisranges=[], saveplot=False, interactive=False, suffix_files = [], top_label='', legend_pos = "bottom", nvtx_suffix = "", dirname = 'plotsL1Run3'):
+def drawplots(objs, legendlabels, xtitle='', ytitle='', ztitle='',  extralabel='', setlogx=False, setlogy=False, plotname='plot', axisranges=[], saveplot=False, saveroot=False, interactive=False, suffix_files = [], top_label='', legend_pos = "bottom", nvtx_suffix = "", dirname = 'plotsL1Run3'):
     ROOT.gStyle.SetOptStat(0)
     ROOT.gStyle.SetTextFont(42)
 
@@ -210,6 +213,8 @@ def drawplots(objs, legendlabels, xtitle='', ytitle='', ztitle='',  extralabel='
 
     if setlogx:
         c.SetLogx()
+    if setlogy:
+        c.SetLogy()
 
     c.Update()
     drawnobject = None
@@ -274,7 +279,8 @@ def drawplots(objs, legendlabels, xtitle='', ytitle='', ztitle='',  extralabel='
     if saveplot: 
         c.SaveAs(dirname+nvtx_suffix+'/'+plotname+'.png')
         c.SaveAs(dirname+nvtx_suffix+'/'+plotname+'.pdf')
-    
+    if saveroot:
+        c.SaveAs(dirname+nvtx_suffix+'/'+plotname+'.root')
 
 def compute_eff(hdens, hnums, addnumtoden):
     effs = []

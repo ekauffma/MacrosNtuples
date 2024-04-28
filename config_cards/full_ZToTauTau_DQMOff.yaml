@@ -1,0 +1,43 @@
+### The different isolation selections to apply
+Isos:
+    # <label>: <selection>
+    # label is the string inserted in histogram and plot names
+    # cut is the value of the cut to apply.
+    # For Non Iso, set the cut to -1.
+    NonIso: -1
+    Iso: 1    
+### The different of regions of eta
+Regions:
+    # <label>: [<low bound>, <high bound>]
+    # label is the string inserted in histogram and plot names
+    # low bound is the lowest value of abs(eta) for that region (inclusive)
+    # high bound is the highest value of abs(eta) for that region (exclusive)
+    # EB: [0.0, 1.479]
+    # EE: [1.479, 2.5]
+    # EB_EE: [0.0, 2.5]
+    EB: [0.0, 1.5]
+    EE: [1.5, 2.1]
+    EB_EE: [0.0, 2.1]
+### The thresholds to draw the turn-on of
+# Thresholds: [<thr 1>, <thr 2>, ...]
+# thr # are the different threshold values (in GeV) to use
+Thresholds: [28, 30, 32, 128, 176]
+### These are some boolean fields to select to compute and draw some plots or not
+#   these fields need to exist, and must be set to either true or false.
+L1TEfficiency: true
+L1TResolution: true
+
+PU_plots:
+    # Whether or not to compute the histograms for each bin of nvtx.
+    # this field needs to exist, and must be set to either true or false.
+    make_histos: false
+
+
+#
+#
+#
+# for debugging purposses
+#TurnOns: false
+#Efficiency: false
+#Prefiring: false
+#Response: false

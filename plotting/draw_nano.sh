@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for dir in "2023B" "2023C" "all2023"
+for dir in "2022EG" "golden_2022EG" "2023B" "golden_2023B" "2023C" "golden_2023C" "all2023" "golden_all2023"
 do
     # Using CMS OMS to get an approximation of the lumi:
     case $dir in

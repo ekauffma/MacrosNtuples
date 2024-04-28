@@ -1,0 +1,24 @@
+mkdir tests
+python3 performances_nano.py -i root://xrootd-cms.infn.it//store/user/lathomas/Muon0/2023Dv2_L1TNanowithPrefiringInfo/240323_075956/0000/out_69.root -o tests/all_MuonJet.root -c MuonJet
+python3 performances_nano.py -i root://xrootd-cms.infn.it//store/user/lathomas/Muon0/2023Dv2_L1TNanowithPrefiringInfo/240323_075956/0000/out_69.root -o tests/all_ZToMuMu.root -c ZToMuMu
+python3 performances_nano.py -i root://xrootd-cms.infn.it//store/user/lathomas/Muon0/2023Dv2_L1TNanowithPrefiringInfo/240323_075956/0000/out_69.root -o tests/all_ZToTauTau.root -c ZToTauTau 
+python3 performances_nano.py -i root://xrootd-cms.infn.it//store/user/lathomas/JetMET0/2023Cv4_L1TNanowithPrefiringInfo/240129_145029/0000/out_338.root -o tests/all_DiJet.root -c DiJet  
+python3 performances_nano.py -i root://xrootd-cms.infn.it//store/user/lathomas/EGamma1/2023Cv4_L1TNanowithPrefiringInfo/240129_152149/0000/out_456.root -o tests/all_PhotonJet.root -c PhotonJet 
+python3 performances_nano.py -i root://xrootd-cms.infn.it//store/user/lathomas/EGamma1/2023Cv4_L1TNanowithPrefiringInfo/240129_152149/0000/out_456.root -o tests/all_ZToEE.root -c ZToEE  
+
+python3 performances_nano_dqmoff.py -i root://xrootd-cms.infn.it//store/user/lathomas/Muon0/2023Dv2_L1TNanowithPrefiringInfo/240323_075956/0000/out_69.root -o tests/out_jets_dqmoff.root -c JetsDQMOff 
+python3 performances_nano_dqmoff.py -i root://xrootd-cms.infn.it//store/user/lathomas/EGamma1/2023Cv4_L1TNanowithPrefiringInfo/240129_152149/0000/out_456.root -o tests/oug_zee_dqmoff.root -c ZToEEDQMOff 
+python3 performances_nano_dqmoff.py -i root://xrootd-cms.infn.it//store/user/lathomas/Muon0/2023Dv2_L1TNanowithPrefiringInfo/240323_075956/0000/out_69.root -o tests/out_ztautau_dqmoff.root -c ZToTauTauDQMOff
+python3 performances_nano_dqmoff.py -i root://xrootd-cms.infn.it//store/user/lathomas/Muon0/2023Dv2_L1TNanowithPrefiringInfo/240323_075956/0000/out_69.root -o tests/out_zmumu_dqmoffl.root -c ZToMuMuDQMOff
+python3 performances_nano_dqmoff.py -i root://xrootd-cms.infn.it//store/user/lathomas/Muon0/2023Dv2_L1TNanowithPrefiringInfo/240323_075956/0000/out_69.root -o tests/out_etsum_dqmoff.root -c EtSumDQMOff
+
+mkdir tests/plotsL1Run3
+python3 ../plotting/make_ZToTauTau_plots.py --dir tests --config  /user/lathomas/GITStuff/MacrosNtuples/config_cards/full_ZToTauTau.yaml   
+python3 ../plotting/make_ZToEE_plots.py --dir tests --config  /user/lathomas/GITStuff/MacrosNtuples/config_cards/full_ZToEE.yaml   
+python3 ../plotting/make_ZToMuMu_plots.py --dir tests --config  /user/lathomas/GITStuff/MacrosNtuples/config_cards/full_ZToMuMu.yaml  
+python3 ../plotting/make_DiJet_plots.py --dir tests --config  /user/lathomas/GITStuff/MacrosNtuples/config_cards/full_DiJet.yaml  
+python3 ../plotting/make_PhotonJet_plots.py --dir tests --config  /user/lathomas/GITStuff/MacrosNtuples/config_cards/full_PhotonJet.yaml  
+python3 ../plotting/make_MuonJet_plots.py --dir tests --config  /user/lathomas/GITStuff/MacrosNtuples/config_cards/full_MuonJet.yaml  
+
+
+

@@ -1,0 +1,57 @@
+### The different isolation selections to apply
+Isos:
+    # <label>: <selection>
+    # label is the string inserted in histogram and plot names
+    # cut is the value of the cut to apply.
+    # For Non Iso, set the cut to -1.
+    TauNonIso: -1
+    TauIso: 1
+
+### The different of regions of eta
+Regions:
+    # <label>: [<low bound>, <high bound>]
+    # label is the string inserted in histogram and plot names
+    # low bound is the lowest value of abs(eta) for that region (inclusive)
+    # high bound is the highest value of abs(eta) for that region (exclusive)
+    Barrel: [0.0, 1.479]
+    Endcap: [1.479, 2.1]
+    AllEta: [0.0, 2.1]
+### The thresholds to draw the turn-on of
+# Thresholds: [<thr 1>, <thr 2>, ...]
+# thr # are the different threshold values (in GeV) to use
+Thresholds: [26, 32, 34, 45, 70, 120]
+### These are some boolean fields to select to compute and draw some plots or not
+#   these fields need to exist, and must be set to either true or false.
+# All the Turn On plots:
+TurnOns: true
+# Response vs Pt and vs Run Nb. These require the AllQual quality to be computed.
+Response: true
+# All the pre/post firing plots (vs Eta Phi, vs Eta, for Mu 10 to 21 and Mu 22)
+Prefiring: false
+# Efficiency vs Run Nb and vs Eta Phi
+Efficiency: true
+### Settings for the plots in bins of nvtx
+PU_plots:
+    # Whether or not to compute the histograms for each bin of nvtx.
+    # this field needs to exist, and must be set to either true or false.
+    make_histos: false
+    # The bins of nvtx to use
+    # nvtx_bins: [<bin 1>, <bin 2>, ...]
+    # using this will make copies of each histogram for each bin
+    # [<bin i>, <bin i+1>], with an inclusive low bound and exclusive high bound.
+    nvtx_bins: [10, 20, 30, 40, 50, 60]
+    # These additionnal thresholds can be set, and only affect the plotting of the figures,
+    # not the computing of the histograms. 
+    # draw_thresholds: [<thr 1>, <thr 2>, ...]
+    # For each thr #, a turn on figure will be made, 
+    # comparing the turn on of this threshold accross all bins of nvtx
+    # For this to be possible, make_histos has to be set to true
+    draw_thresholds: [10]
+#
+#
+#
+# for debugging purposses
+#TurnOns: false
+#Efficiency: false
+#Prefiring: false
+#Response: false
