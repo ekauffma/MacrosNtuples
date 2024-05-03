@@ -1,6 +1,5 @@
 import ROOT
 
-
 ## Importing stuff from other python files 
 from trigger import *
 from binning import *
@@ -57,37 +56,9 @@ def SinglePhotonSelection(df, triggers):
     df = df.Define('ref_Phi','cleanPh_Phi[0]')
     
     return df
-    
-    
-def ZEE_EleSelection(df):
-    '''
-    Select Z->ee events passing a double electron trigger.
-    '''
-    df = df.Filter('HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL')
-    df = df.Define('Electron_PassTightID','Electron_Pt>25&&Electron_mvaIso_WP90')
-    df = df.Filter('Sum(Electron_PassTightId)>=2')
-
-    df = df.Define('_mll', 'mll(Electron_pt, Electron_eta, Electron_phi, PassTightID, PassTightID)')
-    df = df.Filter('_mll>70&&_mll<110')
-    
-    return df
 
 
-def ZMuMu_MuSelection(df):
-    '''
-    Selects Z->mumu events passing a single muon trigger. Defines probe pt/eta/phi
-    '''
-    df = df.Filter('HLT_IsoMu24')
-
-    df = df.Define('Muon_PassTightId','Muon_pfIsoId>=3&&Muon_mediumPromptId') 
-    df = df.Filter('Sum(Muon_PassTightId)>=2')
-    df = df.Define('_mll', 'mll(Muon_pt, Muon_eta, Muon_phi, Muon_PassTightId, Muon_PassTightId)')
-    df = df.Filter('_mll>70&&_mll<110')
-
-    return df
-
-    
-def CleanJets(df, JEC):
+def CleanJets(df, JEC, year, era, isData):
     # List of cleaned jets (noise cleaning + lepton/photon overlap removal)
     df = df.Define('_jetPassID', 'Jet_jetId>=6')
 
@@ -96,7 +67,12 @@ def CleanJets(df, JEC):
     # After refinition of the column, jets are not yet ordered in pt
     df = df.Redefine('Jet_pt', 'JetRawPt(Jet_pt, Jet_rawFactor)')
     if JEC:
-       df = df.Redefine('Jet_pt', 'JetCorPt(Jet_area, Jet_eta, Jet_pt, Jet_rawFactor, Rho_fixedGridRhoFastjetAll)')
+       # Define new columns to apply the JECs for each year, era respectively
+       df = df.Define('_year', '{}'.format(year))
+       df = df.Define('_era', '"{}"'.format(era))
+       df = df.Define('_data', 'bool({})'.format(str(isData).lower()))
+       # Apply the JECs
+       df = df.Redefine('Jet_pt', 'JetCorPt(Jet_area, Jet_eta, Jet_pt, Jet_rawFactor, Rho_fixedGridRhoFastjetAll, _year, _era, _data)')
  
     # Next line to make sure we remove the leptons/the photon
     df = df.Define('isCleanJet','_jetPassID&&(Jet_pt>30||(Jet_pt>20&&abs(Jet_eta)<2.4))&&Jet_muEF<0.5&&Jet_chEmEF<0.5&&Jet_neEmEF<0.8')
@@ -138,13 +114,16 @@ def PtBalanceSelection(df):
     return df
 
 
-def AnalyzePtBalance(df, JEC):
+def AnalyzePtBalance(df, JEC, isData):
     histos = {}                                 # Dictionary for histograms (one histo per eta, alpha and ref_Pt)
     df_ptBalanceBinnedInEtaAndAlphaPerPt = {}   # RDataFrame for filtering on eta, alpha and ref_Pt bins
 
     suffix = '_rawPt'
     if JEC:
        suffix = '_corPt'
+
+    if isData: suffix += '_Data'
+    else: suffix += '_MC'
 
     # Loop over eta bins
     for e in range(NetaBins):

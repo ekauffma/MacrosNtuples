@@ -22,6 +22,9 @@ def main():
         usage='use "%(prog)s --help" for more information',
         formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("--max_events",    dest="max_events", help="Maximum number of events to analyze. Default=-1 i.e. run on all events.", type=int,  default=-1)
+    parser.add_argument("--year",          dest="year",       help="Year of data taking i.e 2022 or 2023 (used for JECs)", type=int,  default=2022)
+    parser.add_argument("--era",           dest="era",        help="Era within the year i.e C or D (used for JECs)", type=str,  default='')
+    parser.add_argument("--isData",        dest="isData",     help="True is it's data and False if it's MC (used for JECs)", type=bool,  default=True)
     parser.add_argument("--JEC",           dest="JEC",        help="Apply the newest Jet Energy Corrections. When not added the jet raw pt is used", action='store_true')
     parser.add_argument("-i", "--input",   dest="inputFile",  help="Input file", type=str, default='')
     parser.add_argument("-o", "--output",  dest="outputFile", help="Output file", type=str, default='')
@@ -87,13 +90,14 @@ def main():
     ## Do the analysis depending on the channel
     if args.channel == 'Photon':
            
-        df = SinglePhotonSelection(df, triggers) 
-        
-        df = CleanJets(df, args.JEC)
+        df = SinglePhotonSelection(df, triggers)
+
+        # Provide as arguments JEC flag and year/era/isData for the Jet Energy Corrections
+        df = CleanJets(df, args.JEC, args.year, args.era, args.isData)
         
         df = PtBalanceSelection(df)
         
-        df, all_histos_balance = AnalyzePtBalance(df, args.JEC)
+        df, all_histos_balance = AnalyzePtBalance(df, args.JEC, args.isData)
         
         df_report = df.Report()
         

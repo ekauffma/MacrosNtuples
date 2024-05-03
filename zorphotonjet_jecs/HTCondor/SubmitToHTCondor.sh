@@ -13,27 +13,71 @@ NC='\033[0m' # No Color
 Help(){
     echo                                                                
     printf "=%.0s" {1..114}; printf "\n"                                 
-    echo -e "                ${RED}Usage:   $0  <Dataset>  <Year>  <Era>  <Output>${NC}" 
+    echo -e "${RED}1)                Usage:   $0  <Dataset>  <Year>  <Era>  <Output>  <Nano>${NC}"
     printf "=%.0s" {1..114}; printf "\n"                                 
     echo
-    echo "Dataset    ---> All / EGamma / Muon / SingleMuon / G-4Jets"    
+    echo "Dataset    ---> EGamma / Muon / SingleMuon / G-4Jets"
     echo "Year       ---> 2022 / 2023"
-    echo "Era        ---> C / D / E / F / G / Summer22 (Depending on the Year and Dataset: check Datasets.md)"   
+    echo "Era        ---> C / D / E / F / G / MC (Depending on the Year and Dataset: check Datasets.md)"
     echo "Output     ---> Output directory to be created in /pnfs/iihe/cms/store/user/${USER}/JEC/<Year>/<Dataset>/Run<Era>/"
-    printf "=%.0s" {1..114}; printf "\n"                                 
+    echo "Nano       ---> JMENano / Nano"
+    echo
+    echo -e "                                                 \033[1m OR \033[0m                                                               "
+    echo
+    printf "=%.0s" {1..114}; printf "\n"
+    echo -e "${RED}2)                Usage:   $0 -f input.txt${NC}"
+    printf "=%.0s" {1..114}; printf "\n"
+    echo
+    echo "input.txt  ---> Inputs folder"
     echo                                                                
     exit 1                                                              
 }
 
-# Check number of arguments
-if [ "$#" -ne 4 ]; then 
-    Help                                           
+# Check number of arguments: 5 if provided from the terminal, 2 if provided by input file
+if [ "$#" -ne 5 ] && [ "$#" -ne 2 ]; then
+    Help
+    exit 1
+fi
+
+# If the number is 5, we initialize the variables from the values provided through the terminal
+if [ "$#" -eq 5 ]; then
+   dataset=$1
+   year=$2
+   era=$3
+   folder=
+   files=$5
+# If the number is 2, then we initialize the variables from the values stored in the input file
+elif [ "$#" -eq 2 ] && [ "$1" = "-f" ]; then
+   infile="$2"
+   if [ ! -f "$infile" ]; then
+      echo
+      echo -e "${RED}Error : Input file not found: $infile ${NC}"
+      exit 1
+   fi
+
+   # Read the arguments from the file and store them in an array
+   args=($(<"$infile"))
+
+   # Check if the number of arguments is at least 5
+   if [ ${#args[@]} -lt 5 ]; then
+      echo "${RED}Error: Insufficient arguments in the input file. ${NC}"
+      exit 1
+   fi
+
+   # Assign the arguments to the variables
+   dataset=${args[0]}
+   year=${args[1]}
+   era=${args[2]}
+   folder="${args[3]}_$(date '+%Y%m%d_%H%M%S')"
+   files=${args[4]}
+else
+   Help
+   exit 1
 fi
 
 # Check if dataset name is correct and set the channel variable to be used later                                                    
 # Use photon channel for the moment
-dataset=$1                                                                                     
-if ! [[ "$dataset" =~ ^(All|EGamma|Muon|SingleMuon|G-4Jets) ]]
+if ! [[ "$dataset" =~ ^(EGamma|Muon|SingleMuon|G-4Jets) ]]
 then                                                                                     
     echo
     echo -e "${RED}Error : Invalid Dataset name!${NC}"                                                       
@@ -41,24 +85,26 @@ then
     exit 1                                                                                  
 else
     case $dataset in
-#        All)
-#            channel=      
-#            ;;
         EGamma)
             channel=Photon
             ;;
-#        Muon)
-#            channel=ZtoMuMu
-#            ;;
+        Muon)
+            channel=ZtoMuMu
+#            channel=ZtoEE
+            ;;
 #        SingleMuon)
 #            channel=
-#        G-Jets)
-#            channel=
+        G-Jets)
+            channel=Photon
+            ;;
+        # Default channel below
+        *)
+            channel=Photon
+            ;;
     esac
 fi                                                                                          
     
 # Check if year is correct
-year=$2
 if ! [[ "$year" =~ ^(2022|2023) ]]; then
     echo
     echo -e "${RED}Error : Invalid Year!${NC}"                                                       
@@ -66,12 +112,25 @@ if ! [[ "$year" =~ ^(2022|2023) ]]; then
     exit 1
 fi
 
-# To do: Check if era is correct (different eras per year) 
-# Use carefully until then !!!
-era=$3
+# Check if era is correct depending on the year
+if [[ $year == 2022 ]]; then
+   if ! [[ "$era" =~ ^(C|D|E|F|G) ]]; then
+      echo -e "${RED}Error : Invalid era for year 2022!${NC}"
+      echo -e "${RED}2022 eras : C D E F G${NC}"
+      Help
+      exit 1
+   fi
+elif [[ $year == 2023 ]]; then
+   if ! [[ "$era" =~ ^(C|D) ]]; then
+      echo -e "${RED}Error : Invalid era for year 2023!${NC}"
+      echo -e "${RED}2022 eras : C D${NC}"
+      Help
+      exit 1
+   fi
+fi
 
 # Prepare the output directory in personal pnfs store area
-output=/pnfs/iihe/cms/store/user/${USER}/JEC/${year}/${dataset}/Run$era/$4
+output=/pnfs/iihe/cms/store/user/${USER}/JEC/${year}/${dataset}/Run$era/$folder
 if [ ! -d $output ] 
 then
     mkdir -p $output
@@ -82,10 +141,31 @@ else
     exit 1
 fi
 
-# Adapted to EGamma 2022 for the moment --> to be replaced for other years/channels.
-if [[ "$year" -eq 2022 ]]; then
-    #files="/pnfs/iihe/cms/ph/sc4/store/data/Run${year}${era}/${dataset}/NANOAOD/JMENano12p5-v1/70000/*.root" # Small subset of files
-    files="/pnfs/iihe/cms/ph/sc4/store/data/Run${year}${era}/${dataset}/NANOAOD/JMENano12p5-v1/*/*.root"      # All files
+# Check if it's Data or MC
+isData=true
+if [[ $dataset == "G-4Jets" ]]; then
+   isData=false
+fi
+
+# Running on NANOAOD or JME custom NANOAOD based on the last argument
+if [[ $files == "JMENano" ]]; then
+   # This is for JME custom NanoAOD
+   # Data
+   if [[ "$isData" == true ]]; then
+      #files="/pnfs/iihe/cms/ph/sc4/store/data/Run${year}${era}/${dataset}/NANOAOD/JMENano12p5-v1/70000/*.root" # Small subset of files
+      files="/pnfs/iihe/cms/ph/sc4/store/data/Run${year}${era}/${dataset}/NANOAOD/JMENano12p5-v1/*/*.root"      # All files
+   # MC
+   else
+      #files="/pnfs/iihe/cms/ph/sc4/store/mc/Run3Summer22NanoAODv12/G-4Jets_HT*/NANOAODSIM/JMENano12p5_132X_mcRun3_2022_realistic_v*/*/*.root"      # All files
+   fi
+elif [[ $files == "Nano" ]]; then
+   # TODO: This is for CMS NanoAOD
+   #files="/pnfs/iihe/cms/ph/sc4/store/data/Run${year}${era}/${dataset}/NANOAOD/JMENano12p5-v1/70000/*.root" # Small subset of files
+   files="/pnfs/iihe/cms/ph/sc4/store/data/Run${year}${era}/${dataset}/NANOAOD/JMENano12p5-v1/*/*.root"      # All files
+else
+    echo -e "${RED}Select either Nano of JMENano for the last argument!${NC}"
+    Help
+    exit 1
 fi
 
 # Modify the template scripts and store the submitted files in the submission directory
@@ -98,15 +178,17 @@ newexe="$dataset"_"$year"_Run"$era".sh
 newsub="$dataset"_"$year"_Run"$era".sub
 
 # New executable script
-sed 's@swpath@'$swpath'@g' $tmpexe > $newexe       # software path as set above
-sed -i 's@subpath@'$subpath'@g' $newexe            # submission path as set above
-sed -i 's@channel@'$channel'@g' $newexe            # channel as set above
+sed 's@SUBPATH@'$subpath'@g' $tmpexe > $newexe     # submission path as set above
+sed -i 's@CHANNEL@'$channel'@g' $newexe            # channel as set above
+sed -i 's@YEAR@'$year'@g' $newexe                  # year as set above
+sed -i 's@ERA@'$era'@g' $newexe                    # era as set above
+sed -i 's@ISDATA@'$isData'@g' $newexe              # Data or MC as set above
 chmod 744 $newexe
 
 # New submission script
-sed 's@exe.sh@'$newexe'@g' $tmpsub > $newsub        # executable name in the submit file
-sed -i 's@path_to_output@'$output'@g' $newsub       # path for the output root files in the submit file
-sed -i 's@list_of_files@'$files'@g' $newsub         # list of input files in the submit file
+sed 's@exe.sh@'$newexe'@g' $tmpsub > $newsub       # executable name in the submit file
+sed -i 's@PATH_TO_OUTPUT@'$output'@g' $newsub      # path for the output root files in the submit file
+sed -i 's@LIST_OF_FILES@'$files'@g' $newsub        # list of input files in the submit file
 
 # Check whether the directory as set above exists. 
 # Otherwise create it and move inside it to proceed with job submission.
