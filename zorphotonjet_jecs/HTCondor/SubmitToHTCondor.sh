@@ -156,7 +156,7 @@ if [[ $files == "JMENano" ]]; then
       files="/pnfs/iihe/cms/ph/sc4/store/data/Run${year}${era}/${dataset}/NANOAOD/JMENano12p5-v1/*/*.root"      # All files
    # MC
    else
-      #files="/pnfs/iihe/cms/ph/sc4/store/mc/Run3Summer22NanoAODv12/G-4Jets_HT*/NANOAODSIM/JMENano12p5_132X_mcRun3_2022_realistic_v*/*/*.root"      # All files
+      files="/pnfs/iihe/cms/ph/sc4/store/mc/Run3Summer22NanoAODv12/G-4Jets_HT*/NANOAODSIM/JMENano12p5_132X_mcRun3_2022_realistic_v*/*/*.root"      # All files
    fi
 elif [[ $files == "Nano" ]]; then
    # TODO: This is for CMS NanoAOD
