@@ -27,8 +27,9 @@ inline int FindLeadingIndex(const ROOT::VecOps::RVec<float> &pt){
 ROOT.gInterpreter.Declare('''
 inline float Alpha_func(ROOT::VecOps::RVec<float> &pt_jet, const float pt_ref){
 
-      sort(pt_jet.begin(), pt_jet.end());
-      return pt_jet.size()>1 ? pt_jet[1]/pt_ref : 0.0;
+    // Sort jets in decreasing order of pT
+    std::sort(pt_jet.begin(), pt_jet.end(), std::greater<>());
+    return pt_jet.size()>1 ? pt_jet[1]/pt_ref : 0.0;
 
 }
 ''')
