@@ -17,5 +17,5 @@ python3 analysis.py --help
 python3 analysis.py -o output.root -c Photon --max_events -1 --year 2022 --era C --isData True --JEC
 ```
 
-### 🖱️ Submit to HTCondor cluster
+### 🖱️ Submit jobs with HTCondor
 Check the directory ```HTCondor```
