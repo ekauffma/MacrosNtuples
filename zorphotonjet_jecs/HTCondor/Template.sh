@@ -9,4 +9,4 @@ source /cvmfs/sft.cern.ch/lcg/views/setupViews.sh LCG_102 x86_64-centos7-gcc11-o
 cd SUBPATH
 cd ../../  # directory with scripts
 
-python3 analysis.py --max_events -1 -i $1 -o $2 -c CHANNEL --year YEAR --era ERA --isData ISDATA --JEC
+python3 analysis.py --max_events -1 -i $1 -o $2 -c CHANNEL --year YEAR --era ERA --isData --JEC
