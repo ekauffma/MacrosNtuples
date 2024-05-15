@@ -183,7 +183,7 @@ sed -i 's@CHANNEL@'$channel'@g' $newexe            # channel as set above
 sed -i 's@YEAR@'$year'@g' $newexe                  # year as set above
 sed -i 's@ERA@'$era'@g' $newexe                    # era as set above
 if [[ "$isData" == false ]]; then
-   sed -i 's@ISDATA@@g' $newexe                    # Data or MC as set above
+   sed -i 's@--isData @@g' $newexe                  # Data or MC as set above
 fi
 chmod 744 $newexe
 
