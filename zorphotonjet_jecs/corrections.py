@@ -19,6 +19,7 @@ ROOT::VecOps::RVec<float> JetRawPt(const ROOT::VecOps::RVec<float> &pt,
 }
 ''')
 
+
 # C++ function to apply the Jet Energy Corrections 
 ROOT.gInterpreter.Declare('''
 ROOT::VecOps::RVec<float> JetCorPt(const ROOT::VecOps::RVec<float> &area, 
@@ -26,44 +27,12 @@ ROOT::VecOps::RVec<float> JetCorPt(const ROOT::VecOps::RVec<float> &area,
                                                const ROOT::VecOps::RVec<float> &pt,
                                                const ROOT::VecOps::RVec<float> &rawf,
                                                const float &rho,
-                                               const int &year,
-                                               const string &era,
-                                               const bool &data){
+                                               const string &JECfile,
+                                               const string &corrfile){
 
     ROOT::VecOps::RVec<float> Jet_corPt;
 
-    // Prepare the file for reading the JECs based on year, era and Data or MC
-    string JECtag , JECname, JECversion, period = era;
-    if (year == 2022){
-       JECversion = "V2";
-       if ((era == "C")||( era == "D")){
-          JECtag     = "2022_Summer22";
-          JECname    = "Summer22_22Sep2023";
-          period     = "CD";
-       }
-       else{
-          string JECtag     = "2022_Summer22EE";
-          string JECname    = "Summer22EE_22Sep2023";
-       }
-    }
-    else if (year == 2023){
-       JECversion = "V1";
-       if (era == "C"){
-          JECtag     = "2023_Summer23";
-          JECname    = "Summer23Prompt23";
-          period += "v4";
-       }
-       else{
-          JECtag     = "2023_Summer23BPix";
-          JECname    = "Summer23BPixPrompt23";
-       }
-    }
-    string JECfile = "JEC/" + JECtag + "/jet_jerc.json.gz";
     auto cset = correction::CorrectionSet::from_file(JECfile);
-    string corrfile;
-
-    if (data) corrfile = JECname + "_Run" + period + "_" + JECversion + "_DATA_";
-    else corrfile = JECname + "_" + JECversion + "_MC_";
 
     //std::cout << "Reading Jet Energy Corrections from files: " << corrfile << endl;
 

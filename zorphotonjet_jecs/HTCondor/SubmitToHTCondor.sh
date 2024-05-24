@@ -16,11 +16,11 @@ Help(){
     echo -e "${RED}1)                Usage:   $0  <Dataset>  <Year>  <Era>  <Output>  <Nano>${NC}"
     printf "=%.0s" {1..114}; printf "\n"                                 
     echo
-    echo "Dataset    ---> EGamma / Muon / SingleMuon / G-4Jets"
-    echo "Year       ---> 2022 / 2023"
-    echo "Era        ---> C / D / E / F / G / MC (Depending on the Year and Dataset: check Datasets.md)"
-    echo "Output     ---> Output directory to be created in /pnfs/iihe/cms/store/user/${USER}/JEC/<Year>/<Dataset>/Run<Era>/"
-    echo "Nano       ---> JMENano / Nano"
+    echo "Dataset            ---> EGamma / Muon / SingleMuon / G-4Jets"
+    echo "Year               ---> 2022 / 2023"
+    echo "Era or HT bin (MC) ---> CDEFG || XXtoYY  MC (Depending on the Year and Dataset: check Datasets.md)"
+    echo "Output             ---> Output directory to be created in /pnfs/iihe/cms/store/user/${USER}/JEC/<Year>/<Dataset>/Run<Era>/"
+    echo "Nano               ---> JMENano / Nano"
     echo
     echo -e "                                                 \033[1m OR \033[0m                                                               "
     echo
@@ -112,25 +112,47 @@ if ! [[ "$year" =~ ^(2022|2023) ]]; then
     exit 1
 fi
 
-# Check if era is correct depending on the year
-if [[ $year == 2022 ]]; then
+# Check if era (depending on the year) or HT bin is correct
+if [[ $year == 2022 && $dataset == "EGamma" ]]; then
    if ! [[ "$era" =~ ^(C|D|E|F|G) ]]; then
       echo -e "${RED}Error : Invalid era for year 2022!${NC}"
       echo -e "${RED}2022 eras : C D E F G${NC}"
       Help
       exit 1
    fi
-elif [[ $year == 2023 ]]; then
+elif [[ $year == 2022 && $dataset == "G-4Jets" ]]; then
+   if ! [[ "$era" == "40to70" || "$era" == "70to100" || "$era" == "100to200" || "$era" == "200to400" || "$era" == "400to600" || "$era" == "600" ]]; then
+      echo -e "${RED}Error : Invalid HT bin${NC}"
+      echo -e "${RED} 40to70, 70to100, 100to200, 200to400, 400to600, 600 ${NC}"
+      Help
+      exit 1
+   fi
+elif [[ $year == 2023 && $channel == "Photon" ]]; then
    if ! [[ "$era" =~ ^(C|D) ]]; then
       echo -e "${RED}Error : Invalid era for year 2023!${NC}"
       echo -e "${RED}2022 eras : C D${NC}"
       Help
       exit 1
    fi
+elif [[ $year == 2023 && $dataset == "G-4Jets" ]]; then
+   if ! [[ "$era" == "40to70" || "$era" == "70to100" || "$era" == "100to200" || "$era" == "200to400" || "$era" == "400to600" || "$era" == "600" ]]; then
+      echo -e "${RED}Error : Invalid HT bin${NC}"
+      echo -e "${RED} 40to70, 70to100, 100to200, 200to400, 400to600, 600 ${NC}"
+      Help
+      exit 1
+   fi
 fi
 
-# Prepare the output directory in personal pnfs store area
+# The output directory in personal pnfs store area
 output=/pnfs/iihe/cms/store/user/${USER}/JEC/${year}/${dataset}/Run$era/$folder
+
+# Check if it's Data or MC
+isData=true
+if [[ $dataset == "G-4Jets" ]]; then
+   isData=false
+   output=/pnfs/iihe/cms/store/user/${USER}/JEC/${year}/${dataset}/HT_$era/$folder 
+fi
+
 if [ ! -d $output ] 
 then
     mkdir -p $output
@@ -139,12 +161,6 @@ else
     echo -e "${RED}The directory $output already exists, please give another Output name!${NC}"
     echo
     exit 1
-fi
-
-# Check if it's Data or MC
-isData=true
-if [[ $dataset == "G-4Jets" ]]; then
-   isData=false
 fi
 
 # Running on NANOAOD or JME custom NANOAOD based on the last argument
@@ -156,7 +172,7 @@ if [[ $files == "JMENano" ]]; then
       files="/pnfs/iihe/cms/ph/sc4/store/data/Run${year}${era}/${dataset}/NANOAOD/JMENano12p5-v1/*/*.root"      # All files
    # MC
    else
-      files="/pnfs/iihe/cms/ph/sc4/store/mc/Run3Summer22NanoAODv12/G-4Jets_HT*/NANOAODSIM/JMENano12p5_132X_mcRun3_2022_realistic_v*/*/*.root"      # All files
+      files="/pnfs/iihe/cms/ph/sc4/store/mc/Run3Summer22NanoAODv12/G-4Jets_HT-${era}_TuneCP5_13p6TeV_madgraphMLM-pythia8/NANOAODSIM/JMENano12p5_132X_mcRun3_2022_realistic_v*/*/*.root"      # All files
    fi
 elif [[ $files == "Nano" ]]; then
    # TODO: This is for CMS NanoAOD

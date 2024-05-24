@@ -4,6 +4,7 @@ import ROOT
 from trigger import *
 from binning import *
 from corrections import *
+from jecs import *
 
 # C++ function to find the index of the leading pt jet
 ROOT.gInterpreter.Declare('''
@@ -33,7 +34,6 @@ inline float Alpha_func(ROOT::VecOps::RVec<float> &pt_jet, const float pt_ref){
 
 }
 ''')
-
 
 def SinglePhotonSelection(df, triggers):
     '''
@@ -68,12 +68,11 @@ def CleanJets(df, JEC, year, era, isData):
     # After refinition of the column, jets are not yet ordered in pt
     df = df.Redefine('Jet_pt', 'JetRawPt(Jet_pt, Jet_rawFactor)')
     if JEC:
-       # Define new columns to apply the JECs for each year, era respectively
-       df = df.Define('_year', '{}'.format(year))
-       df = df.Define('_era', '"{}"'.format(era))
-       df = df.Define('_data', 'bool({})'.format(str(isData).lower()))
+       JECfile, corrfile = JECsInit(year, era, isData)
+       df = df.Define('JECfile', '"{}"'.format(JECfile))
+       df = df.Define('corrfile', '"{}"'.format(corrfile))
        # Apply the JECs
-       df = df.Redefine('Jet_pt', 'JetCorPt(Jet_area, Jet_eta, Jet_pt, Jet_rawFactor, Rho_fixedGridRhoFastjetAll, _year, _era, _data)')
+       df = df.Redefine('Jet_pt', 'JetCorPt(Jet_area, Jet_eta, Jet_pt, Jet_rawFactor, Rho_fixedGridRhoFastjetAll, JECfile, corrfile)')
  
     # Next line to make sure we remove the leptons/the photon
     df = df.Define('isCleanJet','_jetPassID&&(Jet_pt>30||(Jet_pt>20&&abs(Jet_eta)<2.4))&&Jet_muEF<0.5&&Jet_chEmEF<0.5&&Jet_neEmEF<0.8')
@@ -141,6 +140,6 @@ def AnalyzePtBalance(df, JEC, isData):
                 # One histogram per eta, alpha, ref_Pt bin
                 histos['balancevsrefpt' + key + suffix] = df_ptBalanceBinnedInEtaAndAlphaPerPt[key]\
                                                           .Histo2D(ROOT.RDF.TH2DModel('h_BalanceVsRefPt{}'.format(key)+suffix,'ptbalance',\
-                                                          NptBins, jetptBins, NptbalanceBins, ptbalanceBins), 'ref_Pt','ptbalance')
+                                                          NptBins, jetptBins, NptbalanceBins, ptbalanceBins), 'ref_Pt', 'ptbalance', 'LHEWeight_originalXWGTUP')
 
     return df, histos
