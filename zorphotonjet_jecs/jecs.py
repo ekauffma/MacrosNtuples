@@ -1,10 +1,8 @@
+## Function to get prepare the correct JEC file based on year, era and Data/MC
+
 def JECsInit(year, era, isData):
 
-    # Prepare the file for reading the JECs based on year, era and Data or MC
-    year = 2022
-    era = 'C'
-    data = True  # or False based on your use case
-    period = ''
+    period  = ''
 
     if year == 2022:
        JECversion = 'V2'
@@ -15,6 +13,7 @@ def JECsInit(year, era, isData):
        else:
           JECtag     = "2022_Summer22EE"
           JECname    = "Summer22EE_22Sep2023"
+          period     = era
     else:
        JECversion = 'V1'
        if era == 'C':
@@ -27,7 +26,7 @@ def JECsInit(year, era, isData):
        
     JECfile = f'JEC/{JECtag}/jet_jerc.json.gz'
 
-    if data:
+    if isData:
        corrfile = f'{JECname}_Run{period}_{JECversion}_DATA_'
     else: 
        corrfile = f'{JECname}_{JECversion}_MC_'

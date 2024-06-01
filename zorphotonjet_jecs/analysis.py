@@ -48,8 +48,8 @@ def main():
     inputFile = args.inputFile
     if inputFile == '':
         if args.channel == 'Photon':
-            #inputFile = '/pnfs/iihe/cms/ph/sc4/store/data/Run2022C/EGamma/NANOAOD/JMENano12p5-v1/60000/7833bda9-26cd-40c6-812e-53ce7f77e99f.root'
-            inputFile = '/pnfs/iihe/cms/ph/sc4/store/mc/Run3Summer22NanoAODv12/G-4Jets_HT-40to70_TuneCP5_13p6TeV_madgraphMLM-pythia8/NANOAODSIM/JMENano12p5_132X_mcRun3_2022_realistic_v3-v2/60000/3b674813-520d-46ee-b0bd-8fb18d65f23c.root'
+            inputFile = '/pnfs/iihe/cms/ph/sc4/store/data/Run2022C/EGamma/NANOAOD/JMENano12p5-v1/60000/7833bda9-26cd-40c6-812e-53ce7f77e99f.root'
+            #inputFile = '/pnfs/iihe/cms/ph/sc4/store/mc/Run3Summer22NanoAODv12/G-4Jets_HT-40to70_TuneCP5_13p6TeV_madgraphMLM-pythia8/NANOAODSIM/JMENano12p5_132X_mcRun3_2022_realistic_v3-v2/60000/3b674813-520d-46ee-b0bd-8fb18d65f23c.root'
         elif args.channel == 'ZToEE':
             inputFile = '/pnfs/iihe/cms/ph/sc4/store/data/Run2022C/EGamma/NANOAOD/JMENano12p5-v1/60000/7833bda9-26cd-40c6-812e-53ce7f77e99f.root'
         elif args.channel == 'ZToMuMu':
@@ -130,8 +130,10 @@ def main():
             all_histos_balance[i].GetValue().Write()
 
         nvtx_histo.Write()
-        lhe_ht.Write()
-        lhe_photon_pt.Write()
+        if 'LHE_HT' in df.GetColumnNames():
+           lhe_ht.Write()
+        if 'LHEPart_pt' in df.GetColumnNames():
+           lhe_photon_pt.Write()
 
         df_report.Print()
         
