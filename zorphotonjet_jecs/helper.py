@@ -37,13 +37,13 @@ inline float Alpha_func(ROOT::VecOps::RVec<float> &pt_jet, const float pt_ref){
 
 def SinglePhotonSelection(df, triggers):
     '''
-    Select events with exactly one photon with pT>20 GeV.
-    The event must pass a photon trigger (for now 120 GeV trigger only)
+    Select events with exactly one photon with pT>115 GeV.
+    The event must pass a photon trigger (for now 110 GeV unprescaled trigger only)
     '''
     df = df.Filter(TriggerFired(triggers),'trigger single photon')
 
-    df = df.Define('photonsptgt20','Photon_pt>20&&Photon_pfChargedIsoPFPV<0.2')
-    df = df.Filter('Sum(photonsptgt20)==1','=1 photon with p_{T}>20 GeV')
+    df = df.Define('photonsptgt115','Photon_pt>115&&Photon_pfChargedIsoPFPV<0.2')
+    df = df.Filter('Sum(photonsptgt115)==1','=1 photon with p_{T}>115 GeV')
 
     df = df.Define('isRefPhoton','Photon_mvaID_WP80&&Photon_electronVeto&&Photon_pfChargedIsoPFPV<0.03&&Photon_pfRelIso03_all_quadratic<0.05&&abs(Photon_eta)<1.479&&'+TriggerSelect(triggers))
     
