@@ -6,16 +6,15 @@ import os
 import sys
 
 gROOT.SetBatch(True)
+gStyle.SetOptStat(0)
 
 sys.path.insert(1, '../..') # for importing the binning from another directory
 from binning import *
 
 # Data input
-#infile_dt = TFile('/pnfs/iihe/cms/store/user/gparaske/JEC/2022/EGamma/VBF_RunCD.root')
 infile_dt = TFile('/pnfs/iihe/cms/store/user/gparaske/JEC/2022/EGamma/RunCD.root')
 # MC input
-#infile_MC = TFile('/pnfs/iihe/cms/store/user/gparaske/JEC/2022/G-4Jets/VBF_20240507_111422/All.root')
-infile_MC = TFile('/pnfs/iihe/cms/store/user/gparaske/JEC/2022/G-4Jets/MC.root')
+infile_MC = TFile('/pnfs/iihe/cms/store/user/gparaske/JEC/2022/G-4Jets/All_Triggers/MC.root')
 
 # Get the 2D histograms with the pt balance and create the Y projections
 keys_dt = infile_dt.GetListOfKeys() # Data 
@@ -150,12 +149,12 @@ for e in range(NetaBins):
         m = 0.
         if ( m_MC > m_dt):
            m = m_MC
-           h_ptBalance_alpha_incl_0p3_MC[index].Draw()
-           h_ptBalance_alpha_incl_0p3_dt[index].Draw('same')
+           h_ptBalance_alpha_incl_0p3_MC[index].Draw('HIST')
+           h_ptBalance_alpha_incl_0p3_dt[index].Draw('same HIST')
         else:
            m = m_dt
-           h_ptBalance_alpha_incl_0p3_dt[index].Draw()
-           h_ptBalance_alpha_incl_0p3_MC[index].Draw('same')
+           h_ptBalance_alpha_incl_0p3_dt[index].Draw('HIST')
+           h_ptBalance_alpha_incl_0p3_MC[index].Draw('same HIST')
          
         leg = TLegend(0.62,0.50,0.92,0.75)
         leg.AddEntry(h_ptBalance_alpha_incl_0p3_MC[index], "MC (G-4Jets)", "l")
@@ -204,12 +203,12 @@ for e in range(NetaBins):
         m = 0.
         if ( m_MC > m_dt):
            m = m_MC
-           h_ptBalance_alpha_incl_1p0_MC[index].Draw()
-           h_ptBalance_alpha_incl_1p0_dt[index].Draw('same')
+           h_ptBalance_alpha_incl_1p0_MC[index].Draw('HIST')
+           h_ptBalance_alpha_incl_1p0_dt[index].Draw('same HIST')
         else:
            m = m_dt
-           h_ptBalance_alpha_incl_1p0_dt[index].Draw()
-           h_ptBalance_alpha_incl_1p0_MC[index].Draw('same')
+           h_ptBalance_alpha_incl_1p0_dt[index].Draw('HIST')
+           h_ptBalance_alpha_incl_1p0_MC[index].Draw('same HIST')
          
         leg = TLegend(0.62,0.50,0.92,0.75)
         leg.AddEntry(h_ptBalance_alpha_incl_1p0_MC[index], "MC (G-4Jets)", "l")
@@ -243,7 +242,6 @@ for e in range(NetaBins):
         #print(' adding: ', h_ptBalance_vs_refpt_alpha_incl_0p3[index+p+1].GetName())
 
     c = TCanvas(str1, str1, 1000, 1000)
-    gStyle.SetOptStat(0)
     gPad.SetLogx()
     h_ptBalance_vs_refpt_alpha_incl_0p3_dt[index].GetXaxis().SetMoreLogLabels()
     h_ptBalance_vs_refpt_alpha_incl_0p3_dt[index].GetXaxis().SetNoExponent()
@@ -309,7 +307,6 @@ for e in range(NetaBins):
         #print(' adding: ', h_ptBalance_vs_refptalpha_incl_1p0[index+p+1].GetName())
 
     c = TCanvas(str1, str1, 1000, 1000)
-    gStyle.SetOptStat(0)
     gPad.SetLogx()
     h_ptBalance_vs_refpt_alpha_incl_1p0_dt[index].GetXaxis().SetMoreLogLabels()
     h_ptBalance_vs_refpt_alpha_incl_1p0_dt[index].GetXaxis().SetNoExponent()

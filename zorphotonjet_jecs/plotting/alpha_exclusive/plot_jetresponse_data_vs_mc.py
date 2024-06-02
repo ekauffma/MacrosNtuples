@@ -109,12 +109,12 @@ for e in range(NetaBins):
             m = 0.
             if ( m_MC > m_dt):
                m = m_MC
-               h_ptBalance_MC[index].Draw()
-               h_ptBalance_dt[index].Draw('same')
+               h_ptBalance_MC[index].Draw('HIST')
+               h_ptBalance_dt[index].Draw('same HIST')
             else:
                m = m_dt
-               h_ptBalance_dt[index].Draw()
-               h_ptBalance_MC[index].Draw('same')
+               h_ptBalance_dt[index].Draw('HIST')
+               h_ptBalance_MC[index].Draw('same HIST')
              
             leg = TLegend(0.62,0.75,0.92,0.90)
             leg.AddEntry(h_ptBalance_MC[index], "MC (G-4Jets)", "l")

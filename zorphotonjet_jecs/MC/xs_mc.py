@@ -1,4 +1,4 @@
-## cross sections per sample in pb
+## cross sections per sample in pb (from XSDB)
 
 xs_gjets = {
 'G-4Jets_HT-40to70_TuneCP5_13p6TeV_madgraphMLM-pythia8': 15310,
