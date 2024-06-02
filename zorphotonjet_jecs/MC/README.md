@@ -5,9 +5,10 @@
   for normalization to the integrated luminosity of the data.
 - [hadd_scale_merge](hadd_scale_merge.py) is the main executable to be run as:
   ```bash 
-  python3 hadd_scale_merge.py -d /pnfs/iihe/cms/store/user/gparaske/JEC/2022/G-4Jets/G-4Jets_HT* -l 38000 -o G-4Jets.root
+  python3 hadd_scale_merge.py -d /pnfs/iihe/cms/store/user/gparaske/JEC/2022/G-4Jets/G-4Jets_HT* -l 34651.77 -o G-4Jets.root
   ```
-  ❗Adapt input folder(s) path `(-d)`, luminosity `(-l)` and output filename `(-o)`
+  ❗Adapt input folder(s) path `(-d)`, luminosity `(-l)` and output filename `(-o)`  
+  ❗For the luminosities check the [lumi](https://github.com/pgianneios/MacrosNtuples/tree/main/zorphotonjet_jecs/lumi) directory
   
   1. Merges all the root files in each sub-directory to one file (per sub-directory) `all.root`.
   2. Normalizes each `all.root` file to the cross section from [xs_mc](xs_mc.py) and creates
