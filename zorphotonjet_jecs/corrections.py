@@ -41,6 +41,7 @@ ROOT::VecOps::RVec<float> JetCorPt(const ROOT::VecOps::RVec<float> &area,
        float sf = cset->at(corrfile + "L1FastJet_AK4PFPuppi")->evaluate({area[i], eta[i], pt[i], rho});
        sf *= cset->at(corrfile + "L2Relative_AK4PFPuppi")->evaluate({eta[i], pt[i]});
        sf *= cset->at(corrfile + "L3Absolute_AK4PFPuppi")->evaluate({eta[i], pt[i]});
+       sf *= cset->at(corrfile + "L2L3Residual_AK4PFPuppi")->evaluate({eta[i], pt[i]});
        Jet_corPt.push_back(sf*pt[i]);
        //std::cout << "Area: " << area[i] << "\t\t" << "Eta: " << eta[i] << "\t\t" << "Pt: " << pt[i] << "\t\t" << "Rho: " << rho << "\t\t" << "Correction: " << sf << endl;
     }
