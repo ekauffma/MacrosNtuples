@@ -1,0 +1,12 @@
+Luminosities (pb) recorded by Photon unprescaled trigger HLT_Photon110EB_TightID_TightIso
+
+-----------------
+Era | Lumi (pb) |
+-----------------
+C   | 17789.37  |
+D   | 9449.46   |
+
+-----------------
+      Sums
+-----------------
+CD: 27238.83

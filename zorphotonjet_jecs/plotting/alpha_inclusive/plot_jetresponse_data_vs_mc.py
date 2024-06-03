@@ -12,9 +12,9 @@ sys.path.insert(1, '../..') # for importing the binning from another directory
 from binning import *
 
 # Data input
-infile_dt = TFile('/pnfs/iihe/cms/store/user/gparaske/JEC/2022/EGamma/RunCD.root')
+infile_dt = TFile('/pnfs/iihe/cms/store/user/gparaske/JEC/2022/EGamma/RunCDEFG_unprescaled.root')
 # MC input
-infile_MC = TFile('/pnfs/iihe/cms/store/user/gparaske/JEC/2022/G-4Jets/All_Triggers/MC.root')
+infile_MC = TFile('/pnfs/iihe/cms/store/user/gparaske/JEC/2022/G-4Jets/Unprescaled/G-4Jets.root')
 
 # Get the 2D histograms with the pt balance and create the Y projections
 keys_dt = infile_dt.GetListOfKeys() # Data 
