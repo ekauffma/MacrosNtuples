@@ -1,11 +1,12 @@
 #!/bin/bash
 
-source /cvmfs/cms.cern.ch/cmsset_default.sh  # CMS default software environment
-cd swpath                                    # swpath to be set from the SubmitToHTCondor.sh script
-eval `scramv1 runtime -sh`                   # this is the cmsenv
-cd subpath                                   # submission path to be set from the SubmitToHTCondor.sh script
-
+# All the variables in capital letters are set from the SubmitToHTCondor.sh script
 # $1 input file to be set from Template.sub
 # $2 output file to be set from Template.sub
-# "channel" to be set from the SubmitToHTCondor.sh script
-python3 ../../analysis.py --max_events -1 -i $1 -o $2 -c channel
+# remove --JEC if you want the raw pT of the jets 
+
+source /cvmfs/sft.cern.ch/lcg/views/setupViews.sh LCG_102 x86_64-centos7-gcc11-opt # T2B environment
+cd SUBPATH
+cd ../../  # directory with scripts
+
+python3 analysis.py --max_events -1 -i $1 -o $2 -c CHANNEL --year YEAR --era ERA --isData --JEC

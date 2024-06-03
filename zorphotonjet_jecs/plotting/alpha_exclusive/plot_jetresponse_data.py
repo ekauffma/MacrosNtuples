@@ -7,11 +7,11 @@ import sys
 
 gROOT.SetBatch(True)
 
-sys.path.insert(1, '../') # for importing the binning from another directory
+sys.path.insert(1, '../..') # for importing the binning from another directory
 from binning import *
 
 # Input file : TODO Make it an argument
-infile = TFile('/pnfs/iihe/cms/store/user/gparaske/JEC/2022/EGamma/RunC/v1/All.root')
+infile = TFile('/pnfs/iihe/cms/store/user/gparaske/JEC/2022/EGamma/RunC/alpha_exclusive/cor_pt/All.root')
 
 # Get the 2D histograms with the pt balance and create the Y projections
 keys = infile.GetListOfKeys()
@@ -105,7 +105,7 @@ for e in range(NetaBins):
         h_ptBalance_vs_refpt[index].SetMarkerColor(kBlue+1)
         h_ptBalance_vs_refpt[index].SetLineColor(kBlue+1)
         h_ptBalance_vs_refpt[index].SetTitle('p_{T} balance: #eta=' + str1 + ', ' + '#alpha=' + str2)
-        h_ptBalance_vs_refpt[index].GetXaxis().SetTitle('p_{T}^{#gamma}')
+        h_ptBalance_vs_refpt[index].GetXaxis().SetTitle('p_{T}^{#gamma} (GeV)')
         h_ptBalance_vs_refpt[index].GetXaxis().SetTitleOffset(1.3)
         h_ptBalance_vs_refpt[index].GetYaxis().SetTitle('p_{T} balance')
         h_ptBalance_vs_refpt[index].GetYaxis().SetLabelSize(0.03)

@@ -12,7 +12,8 @@ def TriggerInit(df, channel):
  
     if channel == 'Photon':
        #triggers = fnmatch.filter(columns, 'HLT_Photon*EB_TightID_TightIso')              # Full list of triggers of interest
-       triggers = ['HLT_Photon30EB_TightID_TightIso', 'HLT_Photon110EB_TightID_TightIso']
+       #triggers = ['HLT_Photon30EB_TightID_TightIso', 'HLT_Photon110EB_TightID_TightIso']
+       triggers = ['HLT_Photon110EB_TightID_TightIso']
        print('List of triggers to be used : ',triggers)  
   
     return triggers

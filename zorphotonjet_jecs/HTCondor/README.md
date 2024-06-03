@@ -1,12 +1,12 @@
-# 🖱️ Submit jobs to HTCondor (T2B)
+# 🖱️ Submit jobs with HTCondor (T2B)
 
 ## 💡 How to
 1. Check the available options by running:
 ```bash
 ./SubmitToHTCondor.sh
 ```
-2. The arguments needed are:
-   - **Dataset** ➡️ Choose among: All || EGamma || Muon || SingleMuon || G-4Jets.
+2. The arguments needed (from command line) are:
+   - **Dataset** ➡️ Choose among: EGamma || Muon || SingleMuon || G-4Jets.
    - **Year** ➡️ Choose among: 2022 || 2023.
    - **Era** ➡️ Depends on the year and dataset (check the [Datasets folder](Datasets)).
    - **Output** ➡️ The directory (for the output root files) to be created in:
@@ -14,9 +14,14 @@
      /pnfs/iihe/cms/store/user/${USER}/JEC/<Year>/<Dataset>/Run<Era>/
      ```
      You can modify this option within the script by setting the ```$output``` variable.
-3. Example:
+   - **Nano** ➡️ For the moment choose only JMENano
+3. Example (providing arguments from command line):
    ```bash
-   ./SubmitToHTCondor.sh EGamma 2022 C Validation
+   ./SubmitToHTCondor.sh EGamma 2022 C Validation JMENano
+   ```
+   or (providing arguments from txt file):
+   ```bash
+   ./SubmitToHTCondor.sh -f Inputs/EGamma_2022C_JMENano.txt
    ```
 
 ## ℹ️ Information
@@ -26,7 +31,7 @@ The [SubmitToHTCondor.sh](SubmitToHTCondor.sh) script proceeds as follows:
    - [Template.sub](Template.sub) is the submission file as this would be submitted with ```condor_submit```
    - [Template.sh](Template.sh) is the executable script which runs the analysis ```python3 ...```
 3. It creates 2 new scripts (based on the templates) with the input dataset(s), path configuration etc.
-4. It creates a sub-directory ```JobSub``` (within HTCondor directory) which is used as submission directory.  
+4. It creates a sub-directory ```JobSub``` (within HTCondor directory) which is used to put the submission files.  
    The ```JobSub``` directory holds the 2 new scripts, along with directories for job progress reporting:
    - error
    - log
@@ -40,8 +45,6 @@ The [SubmitToHTCondor.sh](SubmitToHTCondor.sh) script proceeds as follows:
    You can modify this option within the script by setting the ```$output``` variable.
 6. Finally, the script prints information with the location of submission, job reporting and output root files.
 
-## ⚠️ For the moment the scripts has been tested for:
-- Dataset = EGamma
-- Year = 2022
-- Era = C
+## ⚠️ Based on the year, era and dataset (data or MC) the relevant JECs will be chosen.
+## ⚠️ To use raw jet p<sub>T</sub> instead of the corrected jet p<sub>T</sub>, remove ```--JEC``` from ```Template.sh```
    

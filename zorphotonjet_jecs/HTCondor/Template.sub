@@ -20,15 +20,15 @@ transfer_input_files            = $(filename)
 ##############################################################################
 # Arguments for the executable script                                        #
 # $1 = $filename = for the input file (as explained above)                   #                                          
-# $2 = "path_to_output" will be modified from the SubmitToHTCondor.sh script #
+# $2 = "PATH_TO_OUTPUT" will be modified from the SubmitToHTCondor.sh script #
 ##############################################################################
-arguments                       = $(filename) path_to_output/output_$(ClusterId)$(ProcId).root
+arguments                       = $(filename) PATH_TO_OUTPUT/output_$(ClusterId)$(ProcId).root
 
 ###########################################################
 # Output files to the submit machine (Default is ON_EXIT) #
 # ON_SUCCESS means if the success_exit_code=0             #
 ###########################################################
-# should_transfer_files = no
+# should_transfer_files = yes
 # when_to_transfer_output       = ON_SUCCESS
 # when_to_transfer_output       = ON_EXIT
 
@@ -45,6 +45,6 @@ arguments                       = $(filename) path_to_output/output_$(ClusterId)
 # +JobFlavour           	= microcentury
 
 ######################################################################################################
-# Job submission : one job per file "list_of_files" will be modified from SubmitToHTCondor.sh script #
+# Job submission : one job per file "LIST_OF_FILES" will be modified from SubmitToHTCondor.sh script #
 ######################################################################################################
-queue filename matching files list_of_files
+queue filename matching files LIST_OF_FILES

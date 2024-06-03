@@ -1,0 +1,11 @@
+*.root
+__pycache__
+HTCondor/JobSub
+plotting/alpha_inclusive/plots/
+plotting/alpha_inclusive/jet_response_alpha_0p3/
+plotting/alpha_inclusive/jet_response_alpha_1p0/
+plotting/alpha_inclusive/jet_response_vs_refpt_alpha_0p3/
+plotting/alpha_inclusive/jet_response_vs_refpt_alpha_1p0/
+plotting/alpha_exclusive/jet_response_alpha_exclusive/
+plotting/alpha_exclusive/jet_response_vs_alpha/
+plotting/alpha_exclusive/jet_response_vs_refpt_alpha_exclusive/
