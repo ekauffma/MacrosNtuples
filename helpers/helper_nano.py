@@ -637,7 +637,7 @@ def L1ETMHF(df):
 
 def CleanJets(df):
     #List of cleaned jets (noise cleaning + lepton/photon overlap removal)
-    df = df.Define('_jetPassID', 'Jet_jetId>=4')
+    df = df.Define('_jetPassID', 'Jet_jetId>=6') # originally 4
     df = df.Define('isCleanJet','_jetPassID&&Jet_pt>30&&Jet_muEF<0.5&&Jet_chEmEF<0.5')
     df = df.Define('cleanJet_Pt','Jet_pt[isCleanJet]')
     df = df.Define('cleanJet_Eta','Jet_eta[isCleanJet]')
