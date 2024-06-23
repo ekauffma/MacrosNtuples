@@ -431,7 +431,7 @@ def makehistosforturnons_inprobeetaranges(df, histos, etavarname, phivarname, pt
             #Response vs pt and vs runnb (2d)
             histos[prefix+str_bineta+'_ResponseVsPt'+suffix] = df_etarange.Histo2D(ROOT.RDF.TH2DModel('h_ResponseVsPt_{}_{}'.format(prefix, str_bineta)+suffix, '', 200, 0, 200, 100, 0, 2), 'denominator_pt', 'response')
             histos[prefix+str_bineta+'_ResponseVsPt_big_bins'+suffix] = df_etarange.Histo2D(ROOT.RDF.TH2DModel('h_ResponseVsPt_big_bins_{}_{}'.format(prefix, str_bineta)+suffix, '', 20, 0, 200, 100, 0, 2), 'denominator_pt', 'response')
-            histos[prefix+str_bineta+'_ResponseVsRunNb'+suffix] = df_etarange.Histo2D(ROOT.RDF.TH2DModel('h_ResponseVsRunNb_{}_{}'.format(prefix, str_bineta)+suffix, '', len(runnb_bins)-1, runnb_bins, len(response_bins)-1, response_bins), 'runnb', 'response')
+            #histos[prefix+str_bineta+'_ResponseVsRunNb'+suffix] = df_etarange.Histo2D(ROOT.RDF.TH2DModel('h_ResponseVsRunNb_{}_{}'.format(prefix, str_bineta)+suffix, '', len(runnb_bins)-1, runnb_bins, len(response_bins)-1, response_bins), 'runnb', 'response')
 
         #if i ==1 and prefix == 'EGNonIso_plots':
         #    df_etarange = df_etarange.Filter(stringToPrint)
@@ -444,8 +444,8 @@ def makehistosforturnons_inprobeetaranges(df, histos, etavarname, phivarname, pt
             df_etarange = df_etarange.Define('inplateaupassL1','inplateau && {}>={}'.format(l1varname,l1thresholdforeffvsrunnb))
             df_etarange = df_etarange.Define('N_inplateaupassL1','Sum(inplateaupassL1)')
             df_etarange = df_etarange.Define('runnb_inplateaupassL1',"return ROOT::VecOps::RVec<int>(N_inplateaupassL1, run);")
-            histos[prefix+"_plateaueffvsrunnb_numerator_"+str_bineta+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel('h_PlateauEffVsRunNb_Numerator_{}_{}'.format(prefix, str_bineta)+suffix, '', len(runnb_bins)-1, runnb_bins),'runnb_inplateaupassL1')
-            histos[prefix+"_plateaueffvsrunnb_denominator_"+str_bineta+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel('h_PlateauEffVsRunNb_Denominator_{}_{}'.format(prefix, str_bineta)+suffix, '', len(runnb_bins)-1, runnb_bins),'runnb_inplateau')
+            #histos[prefix+"_plateaueffvsrunnb_numerator_"+str_bineta+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel('h_PlateauEffVsRunNb_Numerator_{}_{}'.format(prefix, str_bineta)+suffix, '', len(runnb_bins)-1, runnb_bins),'runnb_inplateaupassL1')
+            #histos[prefix+"_plateaueffvsrunnb_denominator_"+str_bineta+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel('h_PlateauEffVsRunNb_Denominator_{}_{}'.format(prefix, str_bineta)+suffix, '', len(runnb_bins)-1, runnb_bins),'runnb_inplateau')
 
         if config["TurnOns"]:
             for ipt in l1thresholds:
@@ -732,12 +732,12 @@ def EtSum(df, suffix = ''):
     histos['HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_DiJet140_70_Mjj900'+suffix] = df.Filter('HLT_PFMETNoMu120_PFMHTNoMu120_IDTight&&vbf_selection').Histo1D(ROOT.RDF.TH1DModel('h_HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_DiJet140_70_Mjj900'+suffix, '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
 
     # VBF (Met + jet) trigger
-    histos['HLT_DiJet110_35_Mjj650_PFMET110_DiJet140_70_Mjj900'+suffix] =  df.Filter('HLT_DiJet110_35_Mjj650_PFMET110&&vbf_selection').Histo1D(ROOT.RDF.TH1DModel('h_HLT_DiJet110_35_Mjj650_PFMET110_DiJet140_70_Mjj900'+suffix, '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
+    #histos['HLT_DiJet110_35_Mjj650_PFMET110_DiJet140_70_Mjj900'+suffix] =  df.Filter('HLT_DiJet110_35_Mjj650_PFMET110&&vbf_selection').Histo1D(ROOT.RDF.TH1DModel('h_HLT_DiJet110_35_Mjj650_PFMET110_DiJet140_70_Mjj900'+suffix, '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
 
     # VBF trigger
-    if max(runnb_bins) > 367661:
-        histos['h_MetNoMu_Denominator_VBF_DiJet70_40_500'+suffix] = df.Filter('run>367661').Filter('HLT_VBF_filter').Histo1D(ROOT.RDF.TH1DModel('h_MetNoMu_Denominator_VBF_DiJet70_40_500'+suffix, '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
-        histos['HLT_VBF_DiPFJet75_40_Mjj500_Detajj2p5_PFMET85'+suffix] =  df.Filter('run>367661').Filter('HLT_VBF_filter&&HLT_VBF_DiPFJet75_40_Mjj500_Detajj2p5_PFMET85').Histo1D(ROOT.RDF.TH1DModel('HLT_VBF_DiPFJet75_40_Mjj500_Detajj2p5_PFMET85'+suffix, '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
+    #if max(runnb_bins) > 367661:
+    #    histos['h_MetNoMu_Denominator_VBF_DiJet70_40_500'+suffix] = df.Filter('run>367661').Filter('HLT_VBF_filter').Histo1D(ROOT.RDF.TH1DModel('h_MetNoMu_Denominator_VBF_DiJet70_40_500'+suffix, '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
+    #    histos['HLT_VBF_DiPFJet75_40_Mjj500_Detajj2p5_PFMET85'+suffix] =  df.Filter('run>367661').Filter('HLT_VBF_filter&&HLT_VBF_DiPFJet75_40_Mjj500_Detajj2p5_PFMET85').Histo1D(ROOT.RDF.TH1DModel('HLT_VBF_DiPFJet75_40_Mjj500_Detajj2p5_PFMET85'+suffix, '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
         
     return df, histos
 
@@ -896,7 +896,7 @@ def HFNoiseStudy(df, suffix = ''):
 
         histos[p+'_nhfjets'+suffix] = df_passvsfailL1[i].Histo1D(ROOT.RDF.TH1DModel(p+'_nhfjets'+suffix, '', 100, 0, 100), 'nHFJets')
         histos[p+'_npv'+suffix] = df_passvsfailL1[i].Histo1D(ROOT.RDF.TH1DModel(p+'_npv'+suffix, '', 100, 0, 100), 'PV_npvs')
-        histos[p+'_runnb'+suffix] = df_passvsfailL1[i].Histo1D(ROOT.RDF.TH1DModel(p+'_runnb'+suffix, '', len(runnb_bins)-1, runnb_bins), 'run')
+        #histos[p+'_runnb'+suffix] = df_passvsfailL1[i].Histo1D(ROOT.RDF.TH1DModel(p+'_runnb'+suffix, '', len(runnb_bins)-1, runnb_bins), 'run')
         '''
         histos[p+'_photonpt'+suffix] = df_passvsfailL1[i].Histo1D(ROOT.RDF.TH1DModel(p+'_photonpt'+suffix, '', 100, 0, 1000), 'ref_Pt')
         histos[p+'_ptbalance'+suffix] = df_passvsfailL1[i].Histo1D(ROOT.RDF.TH1DModel(p+'_ptbalance'+suffix, '', len(response_bins)-1, response_bins), 'ptbalance')
@@ -980,7 +980,7 @@ def getprefiringhistos(df, histos, probecondition='probe_Pt>20', l1objname='L1Mu
             histos[hname] = df.Filter(cut_typeofevents).Histo1D(ROOT.RDF.TH1DModel(hname, '', 100, -5, 5), colname+'Bx{}_Eta'.format(bx))
             
             hname = l1objname+'{}'.format(l1threshold)+'_'+typeofevents+'_bx'+bx+'_runnb'+suffix
-            histos[hname] = df.Filter(cut_typeofevents).Histo1D(ROOT.RDF.TH1DModel(hname, '', len(runnb_bins)-1, runnb_bins), colname+'Bx{}_runnb'.format(bx))
+            #histos[hname] = df.Filter(cut_typeofevents).Histo1D(ROOT.RDF.TH1DModel(hname, '', len(runnb_bins)-1, runnb_bins), colname+'Bx{}_runnb'.format(bx))
             
             #To be removed
             if typeofevents == 'AllEvents' and suffix.find('_jet500')>=0 and l1objname== 'L1Jet':
@@ -1015,7 +1015,7 @@ def getprefiringhistos(df, histos, probecondition='probe_Pt>20', l1objname='L1Mu
 
         #Prefiring vs run nb
         hname = l1objname+'{}'.format(l1threshold)+'_'+typeofevents+'_Denominator'+'_runnb'+suffix
-        histos[hname] = df.Filter(cut_typeofevents).Histo1D(ROOT.RDF.TH1DModel(hname, '',  len(runnb_bins)-1, runnb_bins), colname+'_runnb')
+        #histos[hname] = df.Filter(cut_typeofevents).Histo1D(ROOT.RDF.TH1DModel(hname, '',  len(runnb_bins)-1, runnb_bins), colname+'_runnb')
         
 
     return histos 

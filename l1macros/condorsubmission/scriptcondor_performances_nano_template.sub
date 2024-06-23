@@ -1,11 +1,11 @@
 # Files
 executable = scriptcondor_performances_nano.sh
-output = /user/lathomas/GITStuff/MacrosNtuples/l1macros/condorsubmission/OUTPUTDIR/log/scriptcondor_$(Process).out
-error = /user/lathomas/GITStuff/MacrosNtuples/l1macros/condorsubmission/OUTPUTDIR/log/scriptcondor_$(Process).err
-log = /user/lathomas/GITStuff/MacrosNtuples/l1macros/condorsubmission/OUTPUTDIR/log/scriptcondor_$(Process).log
+output = /afs/cern.ch/user/e/ekauffma/CMSSW_14_0_0_pre2/src/MacrosNtuples/l1macros/condorsubmission/OUTPUTDIR/log/scriptcondor_$(ProcID).out
+error = /afs/cern.ch/user/e/ekauffma/CMSSW_14_0_0_pre2/src/MacrosNtuples/l1macros/condorsubmission/OUTPUTDIR/log/scriptcondor_$(ProcID).err
+log = /afs/cern.ch/user/e/ekauffma/CMSSW_14_0_0_pre2/src/MacrosNtuples/l1macros/condorsubmission/OUTPUTDIR/log/scriptcondor_$(ProcID).log
 
-transfer_input_files = $(filename)
-arguments            = $(filename)  /user/lathomas/GITStuff/MacrosNtuples/l1macros/condorsubmission/OUTPUTDIR/output_$(Process).root CHANNEL GOLDENJSON
+#transfer_input_files = $(filename)
+arguments            = FILENAMES /eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/240621/output_$(ClusterId)_$(ProcID).root CHANNEL GOLDENJSON
 
 # File transfer behavior
 #should_transfer_files = no
@@ -13,8 +13,12 @@ arguments            = $(filename)  /user/lathomas/GITStuff/MacrosNtuples/l1macr
 
 # Resource requests
 #request_cpus   = 4
-request_memory = 100MB
-request_disk   = 100MB
+#request_memory = 100MB
+#request_disk   = 100MB
++JobFlavour = longlunch
+getenv = True
+
+requirements = (OpSysAndVer =?= "CentOS7")
 
 # Optional resource requests
 #+xcount = 4            # Request 4 cores
@@ -23,4 +27,5 @@ request_disk   = 100MB
 #+remote_queue = "osg"  # Request the OSG queue
 
 # Run job
-queue filename matching files FILENAMES
+#queue filename matching files FILENAMES
+queue
