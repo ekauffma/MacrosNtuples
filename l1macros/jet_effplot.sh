@@ -46,8 +46,7 @@ void test(){
   c1->Draw();
   gStyle->SetOptStat(0);
 
-  //TFile *f1 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/pdas/NANOAOD/010624/output.root");
-  TFile *f1 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/240621/output.root");
+  TFile *f1 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/output_jetid6.root");
   TH1F *h1 = (TH1F*)f1->Get("h_Jet_plots_${eta}");
   h1->GetYaxis()->SetTitle("Efficiency");
   h1->GetYaxis()->SetTitleOffset(1.1);
@@ -134,6 +133,60 @@ void test(){
   t2a->Draw("same");
 
   c1->SaveAs("jet_${eta}_2024E.pdf");
+  
+  TCanvas *c2 =new TCanvas("c2", " ", 0, 0, 700, 800);
+  
+  c2->Range(0, 0, 1, 1);
+  c2->SetFillColor(0);
+  c2->SetBorderMode(0);
+  c2->SetBorderSize(2);
+  c2->SetFrameBorderMode(0);
+  c2->SetGrid();
+  c2->Draw();
+  gStyle->SetOptStat(0);
+ 
+  TH1F *h10 = (TH1F*)f1->Get("h_MuonJet_${eta}_mass");
+  h10->GetYaxis()->SetTitle("Counts");
+  h10->GetYaxis()->SetTitleOffset(1.1);
+  h10->GetXaxis()->SetRangeUser(0., 700.);
+  h10->GetXaxis()->SetTitle("Jet + Muon Invariant Mass [GeV]");
+  h10->Draw("ep");
+  
+  TLatex *t3a = new TLatex(0.5,0.9," #bf{CMS} #it{Preliminary}         X fb^{-1} (2024E, 13.6 TeV) ");
+  t3a->SetNDC();
+  t3a->SetTextFont(42);
+  t3a->SetTextSize(0.04);
+  t3a->SetTextAlign(20);
+  t3a->Draw("same");
+
+  c2->SaveAs("muonjet_mass_2024E_${eta}.pdf");
+  
+  TCanvas *c3 =new TCanvas("c3", " ", 0, 0, 700, 800);
+  
+  c3->Range(0, 0, 1, 1);
+  c3->SetFillColor(0);
+  c3->SetBorderMode(0);
+  c3->SetBorderSize(2);
+  c3->SetFrameBorderMode(0);
+  c3->SetGrid();
+  c3->Draw();
+  gStyle->SetOptStat(0);
+ 
+  TH1F *h11 = (TH1F*)f1->Get("h_Dimuon_${eta}_mass");
+  h11->GetYaxis()->SetTitle("Counts");
+  h11->GetYaxis()->SetTitleOffset(1.1);
+  h11->GetXaxis()->SetRangeUser(0., 700.);
+  h11->GetXaxis()->SetTitle("Dimuon Invariant Mass [GeV]");
+  h11->Draw("ep");
+  
+  TLatex *t4a = new TLatex(0.5,0.9," #bf{CMS} #it{Preliminary}         X fb^{-1} (2024E, 13.6 TeV) ");
+  t4a->SetNDC();
+  t4a->SetTextFont(42);
+  t4a->SetTextSize(0.04);
+  t4a->SetTextAlign(20);
+  t4a->Draw("same");
+
+  c3->SaveAs("dimuon_mass_2024E_${eta}.pdf");
 }
 
 EOF
@@ -143,5 +196,3 @@ root -l -b -q test.C
 rm test.C
 
 done
-
-#done

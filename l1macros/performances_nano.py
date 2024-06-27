@@ -1,14 +1,17 @@
 from datetime import datetime
+import numpy as np
 import ROOT
 import os
 import sys
 import argparse
+from array import array
 
 
 
 #In case you want to load an helper for C++ functions
 ROOT.gInterpreter.Declare('#include "../helpers/Helper.h"')
 ROOT.gInterpreter.Declare('#include "../helpers/Helper_InvariantMass.h"')
+ROOT.gInterpreter.Declare('#include "../helpers/Helper_FourVector.h"')
 #Importing stuff from other python files
 sys.path.insert(0, '../helpers')
 
@@ -246,6 +249,12 @@ def main():
         if h.config['HF_noise']:
             for i in all_histos_hf:
                 all_histos_hf[i].GetValue().Write()
+                
+                
+        bins = array('f',np.linspace(0, 700, 100).tolist())
+        df_muonjet, muonjet_histos = h.makehistosformuonjetmass(df, prefix="h", suffix="", binning=bins)
+        for i in muonjet_histos:
+            muonjet_histos[i].GetValue().Write()
             
 #        df, histos_jets = AnalyzeCleanJets(df, 100, 50) 
 #        
@@ -285,7 +294,6 @@ def main():
                 all_histos[key] = val
 
         df_fwd, fwd_histos = h.ZEE_Forward_Plots(df_fwd)
-        
         
         df_prefvsmll, histos_pref = h.PrefiringVsMll(df_prefvsmll)
         for i in all_histos:

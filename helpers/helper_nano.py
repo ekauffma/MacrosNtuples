@@ -404,6 +404,35 @@ def ZTauTauSelection(df):
     df = df.Define('probe_Phi','Tau_phi[isProbeTau]')
 
     return df
+    
+    
+def makehistosformuonjetmass(df, prefix, suffix, binning, etavarname='cleanJet_Eta'):
+
+    histos = {}
+    
+    # require at least two muons and that the leading and subleading be oppositely charged
+    df = df.Filter("nMuon >= 2 && Muon_charge[0] != Muon_charge[1]")
+
+    df = df.Define("Muon_p4", "ConstructP4(Muon_pt[goodmuonPt25], Muon_eta[goodmuonPt25], Muon_phi[goodmuonPt25], Muon_mass[goodmuonPt25])")
+    
+    for (i, r) in enumerate(config["Regions"]):
+        region = config["Regions"][r]
+        
+        str_bineta = "eta{}to{}".format(region[0], region[1]).replace(".","p")
+        
+        df_etarange = df.Define('inEtaRange','abs({})>={}'.format(etavarname, region[0])+'&&abs({})<{}'.format(etavarname, region[1]))
+        
+        df_etarange = df_etarange.Define("Jet_p4", "ConstructP4(cleanJet_Pt[inEtaRange], cleanJet_Eta[inEtaRange], cleanJet_Phi[inEtaRange], cleanJet_Mass[inEtaRange])")
+        
+        df_etarange = df_etarange.Define("MuonJet_mass", "(Jet_p4[0] + Muon_p4[0]).M()")
+        df_etarange = df_etarange.Define("Dimuon_mass", "(Muon_p4[0] + Muon_p4[1]).M()")
+        
+        histos[prefix+str_bineta+'_MuonJetMass'+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_MuonJet_{str_bineta}_mass', '', len(binning)-1, binning), 'MuonJet_mass')
+        histos[prefix+str_bineta+'_DimuonMass'+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_Dimuon_{str_bineta}_mass', '', len(binning)-1, binning), 'Dimuon_mass')
+    
+    return df, histos
+    
+    
 
 
 
@@ -637,11 +666,12 @@ def L1ETMHF(df):
 
 def CleanJets(df):
     #List of cleaned jets (noise cleaning + lepton/photon overlap removal)
-    df = df.Define('_jetPassID', 'Jet_jetId>=6') # originally 4
+    df = df.Define('_jetPassID', 'Jet_jetId>=4') # originally 4
     df = df.Define('isCleanJet','_jetPassID&&Jet_pt>30&&Jet_muEF<0.5&&Jet_chEmEF<0.5')
     df = df.Define('cleanJet_Pt','Jet_pt[isCleanJet]')
     df = df.Define('cleanJet_Eta','Jet_eta[isCleanJet]')
     df = df.Define('cleanJet_Phi','Jet_phi[isCleanJet]')
+    df = df.Define('cleanJet_Mass','Jet_mass[isCleanJet]')
     df = df.Define('cleanJet_NHEF','Jet_neHEF[isCleanJet]')
     df = df.Define('cleanJet_NEEF','Jet_neEmEF[isCleanJet]')
     df = df.Define('cleanJet_CHEF','Jet_chHEF[isCleanJet]')
