@@ -433,6 +433,25 @@ def makehistosformuonjetmass(df, prefix, suffix, binning, etavarname='cleanJet_E
     return df, histos
     
     
+def makejetpthisto(df, prefix, suffix, binning, etavarname='cleanJet_Eta'):
+
+    histos = {}
+    
+    for (i, r) in enumerate(config["Regions"]):
+        region = config["Regions"][r]
+        
+        str_bineta = "eta{}to{}".format(region[0], region[1]).replace(".","p")
+        
+        df_etarange = df.Define('inEtaRange','abs({})>={}'.format(etavarname, region[0])+'&&abs({})<{}'.format(etavarname, region[1]))
+        
+        df_etarange = df_etarange.Define("Jet_p4", "ConstructP4(cleanJet_Pt[inEtaRange], cleanJet_Eta[inEtaRange], cleanJet_Phi[inEtaRange], cleanJet_Mass[inEtaRange])")
+        
+        
+        histos[prefix+str_bineta+'_JetPt'+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_Jet_{str_bineta}_pt', '', len(binning)-1, binning), 'cleanJet_Pt[inEtaRange]')
+    
+    return df, histos
+    
+    
 
 
 

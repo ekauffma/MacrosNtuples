@@ -256,6 +256,10 @@ def main():
         for i in muonjet_histos:
             muonjet_histos[i].GetValue().Write()
             
+        df_jetpt, jetpt_histos = makejetpthisto(df, prefix="h", suffix="", binning=bins)
+        for i in jetpt_histos:
+            jetpt_histos[i].GetValue().Write()
+            
 #        df, histos_jets = AnalyzeCleanJets(df, 100, 50) 
 #        
 #        df, histos_sum = EtSum(df)
