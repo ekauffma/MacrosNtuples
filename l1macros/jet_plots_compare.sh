@@ -112,6 +112,17 @@ TH1F* getDimuonMassHist(TFile *file, const char* etarange){
   return hist;
 }
 
+TH1F* getJetPtHist(TFile *file, const char* etarange){
+  std::string hist_name = std::string("h_Jet_") + etarange + std::string("_pt");
+  TH1F *hist = (TH1F*)file->Get(hist_name.c_str());
+  hist->GetYaxis()->SetTitle("Counts");
+  hist->GetYaxis()->SetTitleOffset(1.1);
+  hist->GetXaxis()->SetRangeUser(0., 700.);
+  hist->GetXaxis()->SetTitle("Leading Jet Pt [GeV]");
+  
+  return hist;
+}
+
 void test(){
 
   TFile *f1 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/output_jetid4.root");
@@ -311,6 +322,35 @@ void test(){
   t6->Draw("same");
 
   c6->SaveAs("dimuon_mass_compare_2024E_${eta}.pdf");
+  
+  
+  /* jet pt plot */
+  
+  TCanvas *c7 =new TCanvas("c7", " ", 0, 0, 700, 800);
+  setCanvasOptions(c7);
+  c7->Draw();
+  gStyle->SetOptStat(0);
+  
+  TH1F *h11_f1 = getJetPtHist(f1, "${eta}");
+  TH1F *h11_f2 = getJetPtHist(f2, "${eta}");
+  h11_f1->SetLineColor(kCyan+2);
+  h11_f2->SetLineColor(kMagenta+1);
+  h11_f1->Draw("ep");
+  h11_f2->Draw("ep same");
+ 
+  TLegend *legend7 = new TLegend(0.3, 0.68, 0.8, 0.88);
+  legend7->SetTextFont(42);
+  legend7->SetLineColor(0);
+  legend7->SetTextSize(0.03);
+  legend7->SetFillColor(0);
+  legend7->AddEntry(h11_f1, file1Spec, "l");
+  legend7->AddEntry(h11_f2, file2Spec, "l");
+  legend7->Draw();
+  
+  TLatex *t7 = getCMSLabel();
+  t7->Draw("same");
+
+  c7->SaveAs("jet_pt_compare_2024E_${eta}.pdf");
 }
 
 EOF

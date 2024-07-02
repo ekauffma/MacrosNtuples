@@ -444,9 +444,6 @@ def makejetpthisto(df, prefix, suffix, binning, etavarname='cleanJet_Eta'):
         
         df_etarange = df.Define('inEtaRange','abs({})>={}'.format(etavarname, region[0])+'&&abs({})<{}'.format(etavarname, region[1]))
         
-        df_etarange = df_etarange.Define("Jet_p4", "ConstructP4(cleanJet_Pt[inEtaRange], cleanJet_Eta[inEtaRange], cleanJet_Phi[inEtaRange], cleanJet_Mass[inEtaRange])")
-        
-        
         histos[prefix+str_bineta+'_JetPt'+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_Jet_{str_bineta}_pt', '', len(binning)-1, binning), 'cleanJet_Pt[inEtaRange]')
     
     return df, histos
@@ -685,7 +682,7 @@ def L1ETMHF(df):
 
 def CleanJets(df):
     #List of cleaned jets (noise cleaning + lepton/photon overlap removal)
-    df = df.Define('_jetPassID', 'Jet_jetId>=4') # originally 4
+    df = df.Define('_jetPassID', 'Jet_jetId>=6') # originally 4
     df = df.Define('isCleanJet','_jetPassID&&Jet_pt>30&&Jet_muEF<0.5&&Jet_chEmEF<0.5')
     df = df.Define('cleanJet_Pt','Jet_pt[isCleanJet]')
     df = df.Define('cleanJet_Eta','Jet_eta[isCleanJet]')
