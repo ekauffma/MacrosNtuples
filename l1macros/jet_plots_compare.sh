@@ -113,7 +113,7 @@ TH1F* getDimuonMassHist(TFile *file, const char* etarange){
 }
 
 TH1F* getJetPtHist(TFile *file, const char* etarange){
-  std::string hist_name = std::string("h_Jet_") + etarange + std::string("_pt");
+  std::string hist_name = std::string("h_LeadingJetPt_") + etarange;
   TH1F *hist = (TH1F*)file->Get(hist_name.c_str());
   hist->GetYaxis()->SetTitle("Counts");
   hist->GetYaxis()->SetTitleOffset(1.1);
@@ -268,6 +268,8 @@ void test(){
 
   /* jet muon invariant mass plot */
   
+  std::cout<<"Creating jet muon invariant mass plot"<<std::endl;
+
   TCanvas *c5 =new TCanvas("c5", " ", 0, 0, 700, 800);
   setCanvasOptions(c5);
   c5->Draw();
@@ -275,10 +277,17 @@ void test(){
   
   TH1F *h9_f1 = getMuonJetMassHist(f1, "${eta}");
   TH1F *h9_f2 = getMuonJetMassHist(f2, "${eta}");
+  int maxBin1 = h9_f1->GetMaximumBin();
+  double maxBinContent1 = h9_f1->GetBinContent(maxBin1);
+  int maxBin2 = h9_f2->GetMaximumBin();
+  double maxBinContent2 = h9_f2->GetBinContent(maxBin2);
+  double maxBinContent = std::max(maxBinContent1, maxBinContent2);
+  h9_f1->SetMaximum(1.3 * maxBinContent);
+  h9_f2->SetMaximum(1.3 * maxBinContent);
   h9_f1->SetLineColor(kCyan+2);
   h9_f2->SetLineColor(kMagenta+1);
-  h9_f1->Draw("ep");
-  h9_f2->Draw("ep same");
+  h9_f1->Draw("epc");
+  h9_f2->Draw("epc same");
   
   TLegend *legend5 = new TLegend(0.3, 0.68, 0.8, 0.88);
   legend5->SetTextFont(42);
@@ -296,7 +305,9 @@ void test(){
   
   
   /* dimuon invariant mass plot */
-  
+ 
+  std::cout<<"Creating dimuon invariant mass plot"<<std::endl;
+ 
   TCanvas *c6 =new TCanvas("c6", " ", 0, 0, 700, 800);
   setCanvasOptions(c6);
   c6->Draw();
@@ -325,7 +336,9 @@ void test(){
   
   
   /* jet pt plot */
-  
+ 
+  std::cout<<"Creating jet pt plot"<<std::endl;
+ 
   TCanvas *c7 =new TCanvas("c7", " ", 0, 0, 700, 800);
   setCanvasOptions(c7);
   c7->Draw();
@@ -333,6 +346,13 @@ void test(){
   
   TH1F *h11_f1 = getJetPtHist(f1, "${eta}");
   TH1F *h11_f2 = getJetPtHist(f2, "${eta}");
+  maxBin1 = h11_f1->GetMaximumBin();
+  maxBinContent1 = h11_f1->GetBinContent(maxBin1);
+  maxBin2 = h11_f2->GetMaximumBin();
+  maxBinContent2 = h11_f2->GetBinContent(maxBin2);
+  maxBinContent = std::max(maxBinContent1, maxBinContent2);
+  h11_f1->SetMaximum(1.3 * maxBinContent);
+  h11_f2->SetMaximum(1.3 * maxBinContent);
   h11_f1->SetLineColor(kCyan+2);
   h11_f2->SetLineColor(kMagenta+1);
   h11_f1->Draw("ep");

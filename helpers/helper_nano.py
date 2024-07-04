@@ -411,7 +411,7 @@ def makehistosformuonjetmass(df, prefix, suffix, binning, etavarname='cleanJet_E
     histos = {}
     
     # require at least two muons and that the leading and subleading be oppositely charged
-    df = df.Filter("nMuon >= 2 && Muon_charge[0] != Muon_charge[1]")
+    #df = df.Filter("nMuon >= 2 && Muon_charge[0] != Muon_charge[1]")
 
     df = df.Define("Muon_p4", "ConstructP4(Muon_pt[goodmuonPt25], Muon_eta[goodmuonPt25], Muon_phi[goodmuonPt25], Muon_mass[goodmuonPt25])")
     
@@ -426,31 +426,14 @@ def makehistosformuonjetmass(df, prefix, suffix, binning, etavarname='cleanJet_E
         
         df_etarange = df_etarange.Define("MuonJet_mass", "(Jet_p4[0] + Muon_p4[0]).M()")
         df_etarange = df_etarange.Define("Dimuon_mass", "(Muon_p4[0] + Muon_p4[1]).M()")
+        df_etarange = df_etarange.Define("JetPt", "(Jet_p4[0]).Pt()")
         
         histos[prefix+str_bineta+'_MuonJetMass'+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_MuonJet_{str_bineta}_mass', '', len(binning)-1, binning), 'MuonJet_mass')
         histos[prefix+str_bineta+'_DimuonMass'+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_Dimuon_{str_bineta}_mass', '', len(binning)-1, binning), 'Dimuon_mass')
-    
+        histos[prefix+str_bineta+'_leadingJetPt'+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_LeadingJetPt_{str_bineta}', '', len(binning)-1, binning), 'JetPt')
     return df, histos
     
     
-def makejetpthisto(df, prefix, suffix, binning, etavarname='cleanJet_Eta'):
-
-    histos = {}
-    
-    for (i, r) in enumerate(config["Regions"]):
-        region = config["Regions"][r]
-        
-        str_bineta = "eta{}to{}".format(region[0], region[1]).replace(".","p")
-        
-        df_etarange = df.Define('inEtaRange','abs({})>={}'.format(etavarname, region[0])+'&&abs({})<{}'.format(etavarname, region[1]))
-        
-        histos[prefix+str_bineta+'_JetPt'+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_Jet_{str_bineta}_pt', '', len(binning)-1, binning), 'cleanJet_Pt[inEtaRange]')
-    
-    return df, histos
-    
-    
-
-
 
 def makehistosforturnons_inprobeetaranges(df, histos, etavarname, phivarname, ptvarname, responsevarname, l1varname, l1thresholds, prefix, binning, l1thresholdforeffvsrunnb, offlinethresholdforeffvsrunnb, suffix = ''):
     '''Make histos for turnons vs pt (1D histos for numerator and denominator) in ranges of eta
@@ -682,7 +665,7 @@ def L1ETMHF(df):
 
 def CleanJets(df):
     #List of cleaned jets (noise cleaning + lepton/photon overlap removal)
-    df = df.Define('_jetPassID', 'Jet_jetId>=6') # originally 4
+    df = df.Define('_jetPassID', 'Jet_jetId==6') # originally 4
     df = df.Define('isCleanJet','_jetPassID&&Jet_pt>30&&Jet_muEF<0.5&&Jet_chEmEF<0.5')
     df = df.Define('cleanJet_Pt','Jet_pt[isCleanJet]')
     df = df.Define('cleanJet_Eta','Jet_eta[isCleanJet]')
