@@ -125,10 +125,10 @@ TH1F* getJetPtHist(TFile *file, const char* etarange){
 
 void test(){
 
-  TFile *f1 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/output_jetid4.root");
-  TFile *f2 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/output_jetid6.root");
-  char file1Spec[] = "JetId = 4";
-  char file2Spec[] = "JetId = 6";
+  TFile *f1 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/240705/output_jetid4.root");
+  TFile *f2 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/240705/output_jetid6.root");
+  char file1Spec[] = "JetId >= 4";
+  char file2Spec[] = "JetId == 6";
   
   
   /* jet efficiency plot for ET> 30 */
@@ -286,6 +286,14 @@ void test(){
   h9_f2->SetMaximum(1.3 * maxBinContent);
   h9_f1->SetLineColor(kCyan+2);
   h9_f2->SetLineColor(kMagenta+1);
+  h9_f1->SetMarkerColor(kCyan+2);
+  h9_f2->SetMarkerColor(kMagenta+1);
+  h9_f1->SetMarkerSize(0.5);
+  h9_f2->SetMarkerSize(0.5);
+  h9_f1->SetMarkerStyle(8);
+  h9_f2->SetMarkerStyle(8);
+  h9_f1->SetLineWidth(2);
+  h9_f2->SetLineWidth(2);
   h9_f1->Draw("epc");
   h9_f2->Draw("epc same");
   
@@ -355,8 +363,16 @@ void test(){
   h11_f2->SetMaximum(1.3 * maxBinContent);
   h11_f1->SetLineColor(kCyan+2);
   h11_f2->SetLineColor(kMagenta+1);
-  h11_f1->Draw("ep");
-  h11_f2->Draw("ep same");
+  h11_f1->SetMarkerColor(kCyan+2);
+  h11_f2->SetMarkerColor(kMagenta+1);
+  h11_f1->SetMarkerSize(0.5);
+  h11_f2->SetMarkerSize(0.5);
+  h11_f1->SetMarkerStyle(8);
+  h11_f2->SetMarkerStyle(8);
+  h11_f1->SetLineWidth(2);
+  h11_f2->SetLineWidth(2);
+  h11_f1->Draw("epc");
+  h11_f2->Draw("epc same");
  
   TLegend *legend7 = new TLegend(0.3, 0.68, 0.8, 0.88);
   legend7->SetTextFont(42);

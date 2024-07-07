@@ -406,7 +406,7 @@ def ZTauTauSelection(df):
     return df
     
     
-def makehistosformuonjetmass(df, prefix, suffix, binning, etavarname='cleanJet_Eta'):
+def makehistosformuonjetmass(df, prefix, suffix, binning_pt, binning_mass, etavarname='cleanJet_Eta'):
 
     histos = {}
     
@@ -428,9 +428,9 @@ def makehistosformuonjetmass(df, prefix, suffix, binning, etavarname='cleanJet_E
         df_etarange = df_etarange.Define("Dimuon_mass", "(Muon_p4[0] + Muon_p4[1]).M()")
         df_etarange = df_etarange.Define("JetPt", "(Jet_p4[0]).Pt()")
         
-        histos[prefix+str_bineta+'_MuonJetMass'+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_MuonJet_{str_bineta}_mass', '', len(binning)-1, binning), 'MuonJet_mass')
-        histos[prefix+str_bineta+'_DimuonMass'+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_Dimuon_{str_bineta}_mass', '', len(binning)-1, binning), 'Dimuon_mass')
-        histos[prefix+str_bineta+'_leadingJetPt'+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_LeadingJetPt_{str_bineta}', '', len(binning)-1, binning), 'JetPt')
+        histos[prefix+str_bineta+'_MuonJetMass'+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_MuonJet_{str_bineta}_mass', '', len(binning_mass)-1, binning_mass), 'MuonJet_mass')
+        histos[prefix+str_bineta+'_DimuonMass'+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_Dimuon_{str_bineta}_mass', '', len(binning_mass)-1, binning_mass), 'Dimuon_mass')
+        histos[prefix+str_bineta+'_leadingJetPt'+suffix] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_LeadingJetPt_{str_bineta}', '', len(binning_pt)-1, binning_pt), 'JetPt')
     return df, histos
     
     
@@ -665,7 +665,7 @@ def L1ETMHF(df):
 
 def CleanJets(df):
     #List of cleaned jets (noise cleaning + lepton/photon overlap removal)
-    df = df.Define('_jetPassID', 'Jet_jetId==6') # originally 4
+    df = df.Define('_jetPassID', 'Jet_jetId>=4') # originally 4
     df = df.Define('isCleanJet','_jetPassID&&Jet_pt>30&&Jet_muEF<0.5&&Jet_chEmEF<0.5')
     df = df.Define('cleanJet_Pt','Jet_pt[isCleanJet]')
     df = df.Define('cleanJet_Eta','Jet_eta[isCleanJet]')

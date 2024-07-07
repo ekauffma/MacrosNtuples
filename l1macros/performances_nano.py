@@ -251,8 +251,9 @@ def main():
                 all_histos_hf[i].GetValue().Write()
                 
                 
-        bins = array('f',np.linspace(0, 700, 100).tolist())
-        df_muonjet, muonjet_histos = h.makehistosformuonjetmass(df, prefix="h", suffix="", binning=bins)
+        bins_jetpt = array('f',np.linspace(0, 400, 100).tolist())
+        bins_jetmuonmass = array('f',np.linspace(0, 1000, 100).tolist())
+        df_muonjet, muonjet_histos = h.makehistosformuonjetmass(df, prefix="h", suffix="", binning_pt=bins_jetpt, binning_mass=bins_jetmuonmass)
         for i in muonjet_histos:
             muonjet_histos[i].GetValue().Write()
             

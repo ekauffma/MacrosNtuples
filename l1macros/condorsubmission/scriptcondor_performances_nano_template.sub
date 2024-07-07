@@ -5,7 +5,7 @@ error = /afs/cern.ch/user/e/ekauffma/CMSSW_14_0_0_pre2/src/MacrosNtuples/l1macro
 log = /afs/cern.ch/user/e/ekauffma/CMSSW_14_0_0_pre2/src/MacrosNtuples/l1macros/condorsubmission/OUTPUTDIR/log/scriptcondor_$(ProcID).log
 
 #transfer_input_files = $(filename)
-arguments            = FILENAMES /eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/240628/output_$(ClusterId)_$(ProcID).root CHANNEL GOLDENJSON
+arguments            = FILENAMES /eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/240705/jetid4/output_$(ClusterId)_$(ProcID).root CHANNEL GOLDENJSON
 
 # File transfer behavior
 #should_transfer_files = no
