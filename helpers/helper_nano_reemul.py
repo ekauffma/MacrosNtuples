@@ -108,8 +108,8 @@ findbadjet = true;
 }
 }
 if(findbadjet){
-for(unsigned int i = 0;i< (L1Jet_pt).size();i++ ){
-cout << "L1 JET Pt, Eta, Phi, Bx: " << (L1Jet_pt)[i]<<", "<<(L1Jet_eta)[i]<<", "<<(L1Jet_phi)[i]<< ", "<<(L1Jet_bx)[i]<<endl;
+for(unsigned int i = 0;i< (L1EmulJet_pt).size();i++ ){
+cout << "L1 JET Pt, Eta, Phi, Bx: " << (L1EmulJet_pt)[i]<<", "<<(L1EmulJet_eta)[i]<<", "<<(L1EmulJet_phi)[i]<< ", "<<(L1EmulJet_bx)[i]<<endl;
 }
 }
 
@@ -136,8 +136,8 @@ cout << "jethfsigmaEtaEta jethfsigmaPhiPhi jethfcentralEtaStripSize "<< (Jet_hfs
 }
 
 
-for(unsigned int i = 0;i< (L1Jet_pt).size();i++ ){
-cout << "L1 JET Pt, Eta, Phi, Bx: " << (L1Jet_pt)[i]<<", "<<(L1Jet_eta)[i]<<", "<<(L1Jet_phi)[i]<<", " << (L1Jet_bx)[i]<<endl;
+for(unsigned int i = 0;i< (L1EmulJet_pt).size();i++ ){
+cout << "L1 JET Pt, Eta, Phi, Bx: " << (L1EmulJet_pt)[i]<<", "<<(L1EmulJet_eta)[i]<<", "<<(L1EmulJet_phi)[i]<<", " << (L1EmulJet_bx)[i]<<endl;
 }
 
 
@@ -405,7 +405,6 @@ def ZTauTauSelection(df):
 
     return df
     
-    
 def makehistosformuonjetmass(df, prefix, suffix, binning_pt, binning_mass, etavarname='cleanJet_Eta'):
 
     histos = {}
@@ -437,7 +436,7 @@ def makehistos_offlinejetetaoverplateau(df, binning_eta, binning_pt, binning_fra
 
     histos = {}
 
-    df = df.Define('idxMatchedL1Jet', 'FindL1ObjIdx_setBx(L1Jet_eta, L1Jet_phi, L1Jet_bx, cleanJet_Eta, cleanJet_Phi, 0).at(0)')
+    df = df.Define('idxMatchedL1Jet', 'FindL1ObjIdx_setBx(L1EmulJet_eta, L1EmulJet_phi, L1EmulJet_bx, cleanJet_Eta, cleanJet_Phi, 0).at(0)')
     df = df.Define('unmatchedJet_Pt', f'cleanJet_Pt[(idxMatchedL1Jet==-1) && (cleanJet_Pt>{offline_pt_threshold})]')
     df = df.Define('unmatchedJet_Eta', f'cleanJet_Eta[(idxMatchedL1Jet==-1) && (cleanJet_Pt>{offline_pt_threshold})]')
     df = df.Define('unmatchedJet_NHEF', f'cleanJet_NHEF[(idxMatchedL1Jet==-1) && (cleanJet_Pt>{offline_pt_threshold})]')
@@ -695,8 +694,7 @@ def L1ETMHF(df):
 
 def CleanJets(df):
     #List of cleaned jets (noise cleaning + lepton/photon overlap removal)
-    print("Count before cleanjet filter = ", df.Count().GetValue())
-    df = df.Define('_jetPassID', 'Jet_jetId==6') # originally 4
+    df = df.Define('_jetPassID', 'Jet_jetId==6')
     df = df.Define('isCleanJet','_jetPassID&&Jet_pt>30&&Jet_muEF<0.5&&Jet_chEmEF<0.5')
     df = df.Define('cleanJet_Pt','Jet_pt[isCleanJet]')
     df = df.Define('cleanJet_Eta','Jet_eta[isCleanJet]')
@@ -709,7 +707,6 @@ def CleanJets(df):
     df = df.Define('cleanJet_MUEF','Jet_muEF[isCleanJet]')
     df = df.Filter(stringToPrintJets)
     df = df.Filter('Sum(isCleanJet)>=1','>=1 clean jet with p_{T}>30 GeV')
-    print("Count after cleanjet filter = ", df.Count().GetValue())
     
     return df
 
@@ -793,12 +790,12 @@ def EtSum(df, suffix = ''):
     histos['HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_DiJet140_70_Mjj900'+suffix] = df.Filter('HLT_PFMETNoMu120_PFMHTNoMu120_IDTight&&vbf_selection').Histo1D(ROOT.RDF.TH1DModel('h_HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_DiJet140_70_Mjj900'+suffix, '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
 
     # VBF (Met + jet) trigger
-    #histos['HLT_DiJet110_35_Mjj650_PFMET110_DiJet140_70_Mjj900'+suffix] =  df.Filter('HLT_DiJet110_35_Mjj650_PFMET110&&vbf_selection').Histo1D(ROOT.RDF.TH1DModel('h_HLT_DiJet110_35_Mjj650_PFMET110_DiJet140_70_Mjj900'+suffix, '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
+#    histos['HLT_DiJet110_35_Mjj650_PFMET110_DiJet140_70_Mjj900'+suffix] =  df.Filter('HLT_DiJet110_35_Mjj650_PFMET110&&vbf_selection').Histo1D(ROOT.RDF.TH1DModel('h_HLT_DiJet110_35_Mjj650_PFMET110_DiJet140_70_Mjj900'+suffix, '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
 
     # VBF trigger
-    #if max(runnb_bins) > 367661:
-    #    histos['h_MetNoMu_Denominator_VBF_DiJet70_40_500'+suffix] = df.Filter('run>367661').Filter('HLT_VBF_filter').Histo1D(ROOT.RDF.TH1DModel('h_MetNoMu_Denominator_VBF_DiJet70_40_500'+suffix, '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
-    #    histos['HLT_VBF_DiPFJet75_40_Mjj500_Detajj2p5_PFMET85'+suffix] =  df.Filter('run>367661').Filter('HLT_VBF_filter&&HLT_VBF_DiPFJet75_40_Mjj500_Detajj2p5_PFMET85').Histo1D(ROOT.RDF.TH1DModel('HLT_VBF_DiPFJet75_40_Mjj500_Detajj2p5_PFMET85'+suffix, '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
+#    if max(runnb_bins) > 367661:
+#        histos['h_MetNoMu_Denominator_VBF_DiJet70_40_500'+suffix] = df.Filter('run>367661').Filter('HLT_VBF_filter').Histo1D(ROOT.RDF.TH1DModel('h_MetNoMu_Denominator_VBF_DiJet70_40_500'+suffix, '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
+#        histos['HLT_VBF_DiPFJet75_40_Mjj500_Detajj2p5_PFMET85'+suffix] =  df.Filter('run>367661').Filter('HLT_VBF_filter&&HLT_VBF_DiPFJet75_40_Mjj500_Detajj2p5_PFMET85').Histo1D(ROOT.RDF.TH1DModel('HLT_VBF_DiPFJet75_40_Mjj500_Detajj2p5_PFMET85'+suffix, '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
         
     return df, histos
 
@@ -806,13 +803,13 @@ def AnalyzeCleanJets(df, JetRecoPtCut, L1JetPtCut, suffix = ''):
     histos = {}
     #Find L1 jets matched to the offline jet
 
-    df = df.Define('cleanJet_idxL1jetbx0', 'FindL1ObjIdx_setBx(L1Jet_eta, L1Jet_phi, L1Jet_bx, cleanJet_Eta, cleanJet_Phi, 0)')
-    df = df.Define('cleanJet_idxL1jetbxmin1', 'FindL1ObjIdx_setBx(L1Jet_eta, L1Jet_phi, L1Jet_bx, cleanJet_Eta, cleanJet_Phi, -1)')
-    df = df.Define('cleanJet_idxL1jetbx1', 'FindL1ObjIdx_setBx(L1Jet_eta, L1Jet_phi, L1Jet_bx, cleanJet_Eta, cleanJet_Phi, 1)')
+    df = df.Define('cleanJet_idxL1jetbx0', 'FindL1ObjIdx_setBx(L1EmulJet_eta, L1EmulJet_phi, L1EmulJet_bx, cleanJet_Eta, cleanJet_Phi, 0)')
+    df = df.Define('cleanJet_idxL1jetbxmin1', 'FindL1ObjIdx_setBx(L1EmulJet_eta, L1EmulJet_phi, L1EmulJet_bx, cleanJet_Eta, cleanJet_Phi, -1)')
+    df = df.Define('cleanJet_idxL1jetbx1', 'FindL1ObjIdx_setBx(L1EmulJet_eta, L1EmulJet_phi, L1EmulJet_bx, cleanJet_Eta, cleanJet_Phi, 1)')
 
-    df = df.Define('cleanJet_L1Pt','GetVal(cleanJet_idxL1jetbx0,L1Jet_pt)')
-    df = df.Define('cleanJet_L1Ptbxmin1','GetVal(cleanJet_idxL1jetbxmin1,L1Jet_pt)')
-    df = df.Define('cleanJet_L1Ptbx1','GetVal(cleanJet_idxL1jetbx1,L1Jet_pt)')
+    df = df.Define('cleanJet_L1Pt','GetVal(cleanJet_idxL1jetbx0,L1EmulJet_pt)')
+    df = df.Define('cleanJet_L1Ptbxmin1','GetVal(cleanJet_idxL1jetbxmin1,L1EmulJet_pt)')
+    df = df.Define('cleanJet_L1Ptbx1','GetVal(cleanJet_idxL1jetbx1,L1EmulJet_pt)')
     
     df = df.Define('cleanJet_L1PtoverRecoPt','cleanJet_L1Pt/cleanJet_Pt')
 
@@ -858,16 +855,16 @@ def AnalyzeCleanJets(df, JetRecoPtCut, L1JetPtCut, suffix = ''):
         df = df.Define('cleanJet_L1IsoTau_Phi','GetVal(cleanJet_idxL1IsoTau, L1Tau_phi)')
         df = df.Define('cleanJet_L1IsoTau_Bx','GetVal(cleanJet_idxL1IsoTau, L1Tau_bx)')
 
-        df = df.Define('cleanJet_idxL1Jet','FindL1ObjIdx(L1Jet_eta, L1Jet_phi, cleanJet_Eta, cleanJet_Phi)')
-        df = df.Define('cleanJet_idxL1Jet_Bx0','FindL1ObjIdx_setBx(L1Jet_eta, L1Jet_phi, L1Jet_bx, cleanJet_Eta, cleanJet_Phi, 0)')
-        df = df.Define('cleanJet_idxL1Jet_Bxmin1','FindL1ObjIdx_setBx(L1Jet_eta, L1Jet_phi, L1Jet_bx, cleanJet_Eta, cleanJet_Phi, -1)')
-        df = df.Define('cleanJet_idxL1Jet_Bxplus1','FindL1ObjIdx_setBx(L1Jet_eta, L1Jet_phi, L1Jet_bx, cleanJet_Eta, cleanJet_Phi, 1)')
-        df = df.Define('cleanJet_L1Jet_Eta','GetVal(cleanJet_idxL1Jet, L1Jet_eta)')
-        df = df.Define('cleanJet_L1Jet_Phi','GetVal(cleanJet_idxL1Jet, L1Jet_phi)')
+        df = df.Define('cleanJet_idxL1Jet','FindL1ObjIdx(L1EmulJet_eta, L1EmulJet_phi, cleanJet_Eta, cleanJet_Phi)')
+        df = df.Define('cleanJet_idxL1Jet_Bx0','FindL1ObjIdx_setBx(L1EmulJet_eta, L1EmulJet_phi, L1EmulJet_bx, cleanJet_Eta, cleanJet_Phi, 0)')
+        df = df.Define('cleanJet_idxL1Jet_Bxmin1','FindL1ObjIdx_setBx(L1EmulJet_eta, L1EmulJet_phi, L1EmulJet_bx, cleanJet_Eta, cleanJet_Phi, -1)')
+        df = df.Define('cleanJet_idxL1Jet_Bxplus1','FindL1ObjIdx_setBx(L1EmulJet_eta, L1EmulJet_phi, L1EmulJet_bx, cleanJet_Eta, cleanJet_Phi, 1)')
+        df = df.Define('cleanJet_L1Jet_Eta','GetVal(cleanJet_idxL1Jet, L1EmulJet_eta)')
+        df = df.Define('cleanJet_L1Jet_Phi','GetVal(cleanJet_idxL1Jet, L1EmulJet_phi)')
 
         
         for bx in ['min1', '0', 'plus1'] :
-            df = df.Define('cleanJet_L1Jet_Pt_Bx{}'.format(bx), 'GetVal(cleanJet_idxL1Jet_Bx{}, L1Jet_pt)'.format(bx))
+            df = df.Define('cleanJet_L1Jet_Pt_Bx{}'.format(bx), 'GetVal(cleanJet_idxL1Jet_Bx{}, L1EmulJet_pt)'.format(bx))
             df = df.Define('cleanJet_L1EG_Pt_Bx{}'.format(bx), 'GetVal(cleanJet_idxL1EG_Bx{}, L1EG_pt)'.format(bx))
             df = df.Define('cleanJet_L1IsoTau_Pt_Bx{}'.format(bx), 'GetVal(cleanJet_idxL1IsoTau_Bx{}, L1Tau_pt)'.format(bx))
         histos = getprefiringhistos(df, histos, probecondition='cleanJet_Pt>50', l1objname='L1Jet', etabinning=[-5., -3., -2.5, -1.3, 0., 1.3, 2.5, 3., 5.], ptbinning=jetmetpt_bins, l1threshold=30, probe_str='cleanJet', suffix = suffix)
@@ -984,7 +981,7 @@ def PtBalanceSelection(df):
     #Compute Pt balance = pt(jet)/pt(ref) => here ref is a photon
     #Reco first
     df = df.Define('ptbalance','cleanJet_Pt[0]/ref_Pt')
-    df = df.Define('ptbalanceL1','L1Jet_pt[cleanJet_idxL1jetbx0[0]]/ref_Pt')
+    df = df.Define('ptbalanceL1','L1EmulJet_pt[cleanJet_idxL1jetbx0[0]]/ref_Pt')
     df = df.Define('probe_Eta','cleanJet_Eta[0]') 
     df = df.Define('probe_Phi','cleanJet_Phi[0]')
     return df

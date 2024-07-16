@@ -123,12 +123,22 @@ TH1F* getJetPtHist(TFile *file, const char* etarange){
   return hist;
 }
 
+TH1F* getUnmatchedJetEtaHist(TFile *file){
+  std::string hist_name = std::string("h_offlineJetEta");
+  TH1F *hist = (TH1F*)file->Get(hist_name.c_str());
+  hist->GetYaxis()->SetTitle("Counts");
+  hist->GetYaxis()->SetTitleOffset(1.1);
+  hist->GetXaxis()->SetTitle("Unmatched Offline Jet #eta");
+  
+  return hist;
+}
+
 void test(){
 
-  TFile *f1 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/240705/output_jetid4.root");
-  TFile *f2 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/240705/output_jetid6.root");
-  char file1Spec[] = "JetId >= 4";
-  char file2Spec[] = "JetId == 6";
+  TFile *f1 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/240712/Run2024E_withHCALTP_L1Jet.root");
+  TFile *f2 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/240712/Run2024E_withHCALTP_L1EmulJet.root");
+  char file1Spec[] = "L1Jet";
+  char file2Spec[] = "L1EmulJet";
   
   
   /* jet efficiency plot for ET> 30 */
@@ -141,8 +151,8 @@ void test(){
   TH1F *h1_f1 = getBackgroundHistforEff(f1, "${eta}");
   TH1F *h1_f2 = getBackgroundHistforEff(f2, "${eta}");
 
-  TH1F *h2_f1 = (TH1F*)f1->Get("h_Jet_plots_${eta}_l1thrgeq180p0");
-  TH1F *h2_f2 = (TH1F*)f2->Get("h_Jet_plots_${eta}_l1thrgeq180p0");
+  TH1F *h2_f1 = (TH1F*)f1->Get("h_Jet_plots_${eta}_l1thrgeq30p0");
+  TH1F *h2_f2 = (TH1F*)f2->Get("h_Jet_plots_${eta}_l1thrgeq30p0");
 
   TEfficiency* pEff1_f1 = getTEfficiency(h1_f1, h2_f1);
   TEfficiency* pEff1_f2 = getTEfficiency(h1_f2, h2_f2);
@@ -155,13 +165,13 @@ void test(){
   pEff1_f1->Draw("same");
   pEff1_f2->Draw("same");
   
-  TLegend *legend1 = getEfficiencyTLegend(pEff1_f1, pEff1_f2, file1Spec, file2Spec, ", L1 jet E_{T} > 180");
+  TLegend *legend1 = getEfficiencyTLegend(pEff1_f1, pEff1_f2, file1Spec, file2Spec, ", L1 jet E_{T} > 30");
   legend1->Draw();
 
   TLatex *t1 = getCMSLabel();
   t1->Draw("same");
 
-  c1->SaveAs("jet_${eta}_ETgt180_2024E.pdf");
+  c1->SaveAs("jet_${eta}_ETgt30_2024E.pdf");
   
   
   /* jet efficiency plot for ET> 60 */
@@ -387,6 +397,52 @@ void test(){
   t7->Draw("same");
 
   c7->SaveAs("jet_pt_compare_2024E_${eta}.pdf");
+  
+  
+  /* unmatched l1jet eta plot */
+ 
+  std::cout<<"Creating unmatched l1jet eta plot"<<std::endl;
+ 
+  TCanvas *c8 =new TCanvas("c8", " ", 0, 0, 700, 800);
+  setCanvasOptions(c8);
+  c8->Draw();
+  gStyle->SetOptStat(0);
+  
+  TH1F *h12_f1 = getUnmatchedJetEtaHist(f1);
+  TH1F *h12_f2 = getUnmatchedJetEtaHist(f2);
+  maxBin1 = h12_f1->GetMaximumBin();
+  maxBinContent1 = h12_f1->GetBinContent(maxBin1);
+  maxBin2 = h12_f2->GetMaximumBin();
+  maxBinContent2 = h12_f2->GetBinContent(maxBin2);
+  maxBinContent = std::max(maxBinContent1, maxBinContent2);
+  h12_f1->SetMaximum(1.5 * maxBinContent);
+  h12_f2->SetMaximum(1.5 * maxBinContent);
+  h12_f1->SetLineColor(kCyan+2);
+  h12_f2->SetLineColor(kMagenta+1);
+  h12_f1->SetMarkerColor(kCyan+2);
+  h12_f2->SetMarkerColor(kMagenta+1);
+  h12_f1->SetMarkerSize(0.5);
+  h12_f2->SetMarkerSize(0.5);
+  h12_f1->SetMarkerStyle(8);
+  h12_f2->SetMarkerStyle(8);
+  h12_f1->SetLineWidth(2);
+  h12_f2->SetLineWidth(2);
+  h12_f1->Draw("h");
+  h12_f2->Draw("h same");
+ 
+  TLegend *legend8 = new TLegend(0.3, 0.68, 0.8, 0.88);
+  legend8->SetTextFont(42);
+  legend8->SetLineColor(0);
+  legend8->SetTextSize(0.03);
+  legend8->SetFillColor(0);
+  legend8->AddEntry(h12_f1, file1Spec, "l");
+  legend8->AddEntry(h12_f2, file2Spec, "l");
+  legend8->Draw();
+  
+  TLatex *t8 = getCMSLabel();
+  t8->Draw("same");
+
+  c8->SaveAs("unmatched_jet_eta_compare_2024E.pdf");
 }
 
 EOF

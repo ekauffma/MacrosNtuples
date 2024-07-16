@@ -257,6 +257,12 @@ def main():
         for i in muonjet_histos:
             muonjet_histos[i].GetValue().Write()
             
+        bins_eta = array('f',np.linspace(-5.0, 5.0, 100).tolist())
+        bins_frac = array('f',np.linspace(0.0, 1.0, 100).tolist())
+        eta_histos = h.makehistos_offlinejetetaoverplateau(df, binning_pt=bins_jetpt, binning_eta=bins_eta, binning_fraction=bins_frac, offline_pt_threshold=100.0)
+        for i in eta_histos:
+            eta_histos[i].GetValue().Write()
+            
 #        df, histos_jets = AnalyzeCleanJets(df, 100, 50) 
 #        
 #        df, histos_sum = EtSum(df)
