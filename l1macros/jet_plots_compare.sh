@@ -45,6 +45,16 @@ void setCanvasOptions(TCanvas* canvas) {
   }
 }
 
+void setTwoHistMaximum(TH1F *hist1, TH1F *hist2, double maxRatio = 1.5){
+  maxBin1 = hist1->GetMaximumBin();
+  maxBinContent1 = hist1->GetBinContent(maxBin1);
+  maxBin2 = hist2->GetMaximumBin();
+  maxBinContent2 = hist2->GetBinContent(maxBin2);
+  maxBinContent = std::max(maxBinContent1, maxBinContent2);
+  hist1->SetMaximum(maxRatio * maxBinContent);
+  hist2->SetMaximum(maxRatio * maxBinContent);
+}
+
 TH1F* getBackgroundHistforEff(TFile *file, const char* etarange){
   std::string hist_name = std::string("h_Jet_plots_") + etarange;
   TH1F *hist = (TH1F*)file->Get(hist_name.c_str());
@@ -80,6 +90,17 @@ TLegend* getEfficiencyTLegend(TEfficiency* pEff_f1, TEfficiency* pEff_f2, const 
   return legend;
 }
 
+TLegend* getHistTLegend(TH1F* hist_1, TH1F* hist_2, const char* file1Spec, const char* file2Spec){
+  TLegend *legend = new TLegend(0.3, 0.68, 0.8, 0.88);
+  legend->SetTextFont(42);
+  legend->SetLineColor(0);
+  legend->SetTextSize(0.03);
+  legend->SetFillColor(0);
+  legend->AddEntry(hist_1, file1Spec, "l");
+  legend->AddEntry(hist_2, file2Spec, "l");
+  return legend;
+}
+
 TLatex* getCMSLabel(){
   TLatex *t = new TLatex(0.5,0.9," #bf{CMS} #it{Preliminary}         X fb^{-1} (2024E, 13.6 TeV) ");
   t->SetNDC();
@@ -90,13 +111,18 @@ TLatex* getCMSLabel(){
   return t;
 }
 
-TH1F* getMuonJetMassHist(TFile *file, const char* etarange){
+TH1F* getMuonJetMassHist(TFile *file, const char* etarange, int histColor){
   std::string hist_name = std::string("h_MuonJet_") + etarange + std::string("_mass");
   TH1F *hist = (TH1F*)file->Get(hist_name.c_str());
   hist->GetYaxis()->SetTitle("Counts");
   hist->GetYaxis()->SetTitleOffset(1.1);
   hist->GetXaxis()->SetRangeUser(0., 700.);
   hist->GetXaxis()->SetTitle("Jet + Muon Invariant Mass [GeV]");
+  hist->SetLineColor(histColor);
+  hist->SetMarkerColor(histColor);
+  hist->SetMarkerSize(0.5);
+  hist->SetMarkerStyle(8);
+  hist->SetLineWidth(2);
   
   return hist;
 }
@@ -112,34 +138,49 @@ TH1F* getDimuonMassHist(TFile *file, const char* etarange){
   return hist;
 }
 
-TH1F* getJetPtHist(TFile *file, const char* etarange){
+TH1F* getJetPtHist(TFile *file, const char* etarange, int histColor){
   std::string hist_name = std::string("h_LeadingJetPt_") + etarange;
   TH1F *hist = (TH1F*)file->Get(hist_name.c_str());
   hist->GetYaxis()->SetTitle("Counts");
   hist->GetYaxis()->SetTitleOffset(1.1);
   hist->GetXaxis()->SetRangeUser(0., 700.);
   hist->GetXaxis()->SetTitle("Leading Jet Pt [GeV]");
+  hist->SetLineColor(histColor;
+  hist->SetMarkerColor(histColor);
+  hist->SetMarkerSize(0.5);
+  hist->SetMarkerStyle(8);
+  hist->SetLineWidth(2);
   
   return hist;
 }
 
-TH1F* getUnmatchedJetEtaHist(TFile *file){
+TH1F* getUnmatchedJetEtaHist(TFile *file, int histColor){
   std::string hist_name = std::string("h_offlineJetEta");
   TH1F *hist = (TH1F*)file->Get(hist_name.c_str());
   hist->GetYaxis()->SetTitle("Counts");
   hist->GetYaxis()->SetTitleOffset(1.1);
   hist->GetXaxis()->SetTitle("Unmatched Offline Jet #eta");
+  hist->SetLineColor(histColor);
+  hist->SetMarkerColor(histColor);
+  hist->SetMarkerSize(0.5);
+  hist->SetMarkerStyle(8);
+  hist->SetLineWidth(2);
   
   return hist;
 }
 
-TH1F* getUnmatchedJetPtHist(TFile *file, const char* etarange){
+TH1F* getUnmatchedJetPtHist(TFile *file, const char* etarange, int histColor){
   std::string hist_name = std::string("h_JetPt_") + etarange;
   TH1F *hist = (TH1F*)file->Get(hist_name.c_str());
   hist->GetYaxis()->SetTitle("Counts");
   hist->GetYaxis()->SetTitleOffset(1.1);
   hist->GetXaxis()->SetRangeUser(0., 700.);
   hist->GetXaxis()->SetTitle("Unmatched Offline Jet Pt [GeV]");
+  hist->SetLineColor(histColor);
+  hist->SetMarkerColor(histColor);
+  hist->SetMarkerSize(0.5);
+  hist->SetMarkerStyle(8);
+  hist->SetLineWidth(2);
   
   return hist;
 }
@@ -314,35 +355,13 @@ void test(){
   c5->Draw();
   gStyle->SetOptStat(0);
   
-  TH1F *h9_f1 = getMuonJetMassHist(f1, "${eta}");
-  TH1F *h9_f2 = getMuonJetMassHist(f2, "${eta}");
-  int maxBin1 = h9_f1->GetMaximumBin();
-  double maxBinContent1 = h9_f1->GetBinContent(maxBin1);
-  int maxBin2 = h9_f2->GetMaximumBin();
-  double maxBinContent2 = h9_f2->GetBinContent(maxBin2);
-  double maxBinContent = std::max(maxBinContent1, maxBinContent2);
-  h9_f1->SetMaximum(1.3 * maxBinContent);
-  h9_f2->SetMaximum(1.3 * maxBinContent);
-  h9_f1->SetLineColor(kCyan+2);
-  h9_f2->SetLineColor(kMagenta+1);
-  h9_f1->SetMarkerColor(kCyan+2);
-  h9_f2->SetMarkerColor(kMagenta+1);
-  h9_f1->SetMarkerSize(0.5);
-  h9_f2->SetMarkerSize(0.5);
-  h9_f1->SetMarkerStyle(8);
-  h9_f2->SetMarkerStyle(8);
-  h9_f1->SetLineWidth(2);
-  h9_f2->SetLineWidth(2);
+  TH1F *h9_f1 = getMuonJetMassHist(f1, "${eta}", kCyan+2);
+  TH1F *h9_f2 = getMuonJetMassHist(f2, "${eta}", kMagenta+1);
+  setTwoHistMaximum(TH1F *h9_f1, TH1F *h9_f2, maxRatio = 1.3)
   h9_f1->Draw("epc");
   h9_f2->Draw("epc same");
   
-  TLegend *legend5 = new TLegend(0.3, 0.68, 0.8, 0.88);
-  legend5->SetTextFont(42);
-  legend5->SetLineColor(0);
-  legend5->SetTextSize(0.03);
-  legend5->SetFillColor(0);
-  legend5->AddEntry(h9_f1, file1Spec, "l");
-  legend5->AddEntry(h9_f2, file2Spec, "l");
+  TLegend *legend5 = getHistTLegend(h9_f1, h9_f2, file1Spec, file2Spec)
   legend5->Draw();
   
   TLatex *t5 = getCMSLabel();
@@ -367,13 +386,7 @@ void test(){
   h10_f1->Draw("ep");
   h10_f2->Draw("ep same");
  
-  TLegend *legend6 = new TLegend(0.3, 0.68, 0.8, 0.88);
-  legend6->SetTextFont(42);
-  legend6->SetLineColor(0);
-  legend6->SetTextSize(0.03);
-  legend6->SetFillColor(0);
-  legend6->AddEntry(h10_f1, file1Spec, "l");
-  legend6->AddEntry(h10_f2, file2Spec, "l");
+  TLegend *legend6 = getHistTLegend(h10_f1, h10_f2, file1Spec, file2Spec)
   legend6->Draw();
   
   TLatex *t6 = getCMSLabel();
@@ -391,35 +404,13 @@ void test(){
   c7->Draw();
   gStyle->SetOptStat(0);
   
-  TH1F *h11_f1 = getJetPtHist(f1, "${eta}");
-  TH1F *h11_f2 = getJetPtHist(f2, "${eta}");
-  maxBin1 = h11_f1->GetMaximumBin();
-  maxBinContent1 = h11_f1->GetBinContent(maxBin1);
-  maxBin2 = h11_f2->GetMaximumBin();
-  maxBinContent2 = h11_f2->GetBinContent(maxBin2);
-  maxBinContent = std::max(maxBinContent1, maxBinContent2);
-  h11_f1->SetMaximum(1.3 * maxBinContent);
-  h11_f2->SetMaximum(1.3 * maxBinContent);
-  h11_f1->SetLineColor(kCyan+2);
-  h11_f2->SetLineColor(kMagenta+1);
-  h11_f1->SetMarkerColor(kCyan+2);
-  h11_f2->SetMarkerColor(kMagenta+1);
-  h11_f1->SetMarkerSize(0.5);
-  h11_f2->SetMarkerSize(0.5);
-  h11_f1->SetMarkerStyle(8);
-  h11_f2->SetMarkerStyle(8);
-  h11_f1->SetLineWidth(2);
-  h11_f2->SetLineWidth(2);
+  TH1F *h11_f1 = getJetPtHist(f1, "${eta}", kCyan+2, kMagenta+1);
+  TH1F *h11_f2 = getJetPtHist(f2, "${eta}", );
+  setTwoHistMaximum(TH1F *h11_f1, TH1F *h11_f2, maxRatio = 1.3)
   h11_f1->Draw("epc");
   h11_f2->Draw("epc same");
  
-  TLegend *legend7 = new TLegend(0.3, 0.68, 0.8, 0.88);
-  legend7->SetTextFont(42);
-  legend7->SetLineColor(0);
-  legend7->SetTextSize(0.03);
-  legend7->SetFillColor(0);
-  legend7->AddEntry(h11_f1, file1Spec, "l");
-  legend7->AddEntry(h11_f2, file2Spec, "l");
+  TLegend *legend7 = getHistTLegend(h11_f1, h11_f2, file1Spec, file2Spec)
   legend7->Draw();
   
   TLatex *t7 = getCMSLabel();
@@ -437,35 +428,13 @@ void test(){
   c8->Draw();
   gStyle->SetOptStat(0);
   
-  TH1F *h12_f1 = getUnmatchedJetEtaHist(f1);
-  TH1F *h12_f2 = getUnmatchedJetEtaHist(f2);
-  maxBin1 = h12_f1->GetMaximumBin();
-  maxBinContent1 = h12_f1->GetBinContent(maxBin1);
-  maxBin2 = h12_f2->GetMaximumBin();
-  maxBinContent2 = h12_f2->GetBinContent(maxBin2);
-  maxBinContent = std::max(maxBinContent1, maxBinContent2);
-  h12_f1->SetMaximum(1.5 * maxBinContent);
-  h12_f2->SetMaximum(1.5 * maxBinContent);
-  h12_f1->SetLineColor(kCyan+2);
-  h12_f2->SetLineColor(kMagenta+1);
-  h12_f1->SetMarkerColor(kCyan+2);
-  h12_f2->SetMarkerColor(kMagenta+1);
-  h12_f1->SetMarkerSize(0.5);
-  h12_f2->SetMarkerSize(0.5);
-  h12_f1->SetMarkerStyle(8);
-  h12_f2->SetMarkerStyle(8);
-  h12_f1->SetLineWidth(2);
-  h12_f2->SetLineWidth(2);
+  TH1F *h12_f1 = getUnmatchedJetEtaHist(f1, kCyan+2);
+  TH1F *h12_f2 = getUnmatchedJetEtaHist(f2, kMagenta+1);
+  setTwoHistMaximum(TH1F *h12_f1, TH1F *h12_f2, maxRatio = 1.3)
   h12_f1->Draw("h");
   h12_f2->Draw("h same");
  
-  TLegend *legend8 = new TLegend(0.3, 0.68, 0.8, 0.88);
-  legend8->SetTextFont(42);
-  legend8->SetLineColor(0);
-  legend8->SetTextSize(0.03);
-  legend8->SetFillColor(0);
-  legend8->AddEntry(h12_f1, file1Spec, "l");
-  legend8->AddEntry(h12_f2, file2Spec, "l");
+  TLegend *legend8 = getHistTLegend(h12_f1, h12_f2, file1Spec, file2Spec)
   legend8->Draw();
   
   TLatex *t8 = getCMSLabel();
@@ -482,35 +451,13 @@ void test(){
   c9->Draw();
   gStyle->SetOptStat(0);
   
-  TH1F *h13_f1 = getUnmatchedJetPtHist(f1, "${eta}");
-  TH1F *h13_f2 = getUnmatchedJetPtHist(f2, "${eta}");
-  maxBin1 = h13_f1->GetMaximumBin();
-  maxBinContent1 = h13_f1->GetBinContent(maxBin1);
-  maxBin2 = h13_f2->GetMaximumBin();
-  maxBinContent2 = h13_f2->GetBinContent(maxBin2);
-  maxBinContent = std::max(maxBinContent1, maxBinContent2);
-  h13_f1->SetMaximum(1.5 * maxBinContent);
-  h13_f2->SetMaximum(1.5 * maxBinContent);
-  h13_f1->SetLineColor(kCyan+2);
-  h13_f2->SetLineColor(kMagenta+1);
-  h13_f1->SetMarkerColor(kCyan+2);
-  h13_f2->SetMarkerColor(kMagenta+1);
-  h13_f1->SetMarkerSize(0.5);
-  h13_f2->SetMarkerSize(0.5);
-  h13_f1->SetMarkerStyle(8);
-  h13_f2->SetMarkerStyle(8);
-  h13_f1->SetLineWidth(2);
-  h13_f2->SetLineWidth(2);
+  TH1F *h13_f1 = getUnmatchedJetPtHist(f1, "${eta}", kCyan+2);
+  TH1F *h13_f2 = getUnmatchedJetPtHist(f2, "${eta}", kMagenta+1);
+  setTwoHistMaximum(TH1F *h13_f1, TH1F *h13_f2)
   h13_f1->Draw("h");
   h13_f2->Draw("h same");
  
-  TLegend *legend9 = new TLegend(0.3, 0.68, 0.8, 0.88);
-  legend9->SetTextFont(42);
-  legend9->SetLineColor(0);
-  legend9->SetTextSize(0.03);
-  legend9->SetFillColor(0);
-  legend9->AddEntry(h13_f1, file1Spec, "l");
-  legend9->AddEntry(h13_f2, file2Spec, "l");
+  TLegend *legend9 = getHistTLegend(h13_f1, h13_f2, file1Spec, file2Spec)
   legend9->Draw();
   
   TLatex *t9 = getCMSLabel();
@@ -529,29 +476,18 @@ void test(){
   
   TH1F *h14_f1 = getUnmatchedJetRatioHist(f1, "${eta}", "NHEF", kCyan+2);
   TH1F *h14_f2 = getUnmatchedJetRatioHist(f2, "${eta}", "NHEF", kMagenta+1);
-  maxBin1 = h14_f1->GetMaximumBin();
-  maxBinContent1 = h14_f1->GetBinContent(maxBin1);
-  maxBin2 = h14_f2->GetMaximumBin();
-  maxBinContent2 = h14_f2->GetBinContent(maxBin2);
-  maxBinContent = std::max(maxBinContent1, maxBinContent2);
-  h14_f1->SetMaximum(1.5 * maxBinContent);
-  h14_f2->SetMaximum(1.5 * maxBinContent);
+  setTwoHistMaximum(TH1F *h14_f1, TH1F *h14_f2)
   h14_f1->Draw("h");
   h14_f2->Draw("h same");
  
-  TLegend *legend10 = new TLegend(0.3, 0.68, 0.8, 0.88);
-  legend10->SetTextFont(42);
-  legend10->SetLineColor(0);
-  legend10->SetTextSize(0.03);
-  legend10->SetFillColor(0);
-  legend10->AddEntry(h14_f1, file1Spec, "l");
-  legend10->AddEntry(h14_f2, file2Spec, "l");
+  TLegend *legend10 = getHistTLegend(h14_f1, h14_f2, file1Spec, file2Spec)
   legend10->Draw();
   
   TLatex *t10 = getCMSLabel();
   t10->Draw("same");
 
   c10->SaveAs("unmatched_jet_NHEF_compare_2024E_${eta}.pdf");
+  
   
   /* unmatched l1jet NEEF plot */
   std::cout<<"Creating unmatched l1jet NEEF plot"<<std::endl;
@@ -563,23 +499,11 @@ void test(){
   
   TH1F *h15_f1 = getUnmatchedJetRatioHist(f1, "${eta}", "NEEF", kCyan+2);
   TH1F *h15_f2 = getUnmatchedJetRatioHist(f2, "${eta}", "NEEF", kMagenta+1);
-  maxBin1 = h15_f1->GetMaximumBin();
-  maxBinContent1 = h15_f1->GetBinContent(maxBin1);
-  maxBin2 = h15_f2->GetMaximumBin();
-  maxBinContent2 = h15_f2->GetBinContent(maxBin2);
-  maxBinContent = std::max(maxBinContent1, maxBinContent2);
-  h15_f1->SetMaximum(1.5 * maxBinContent);
-  h15_f2->SetMaximum(1.5 * maxBinContent);
+  setTwoHistMaximum(TH1F *h15_f1, TH1F *h15_f2)
   h15_f1->Draw("h");
   h15_f2->Draw("h same");
  
-  TLegend *legend11 = new TLegend(0.3, 0.68, 0.8, 0.88);
-  legend11->SetTextFont(42);
-  legend11->SetLineColor(0);
-  legend11->SetTextSize(0.03);
-  legend11->SetFillColor(0);
-  legend11->AddEntry(h15_f1, file1Spec, "l");
-  legend11->AddEntry(h15_f2, file2Spec, "l");
+  TLegend *legend11 = getHistTLegend(h15_f1, h15_f2, file1Spec, file2Spec)
   legend11->Draw();
   
   TLatex *t11 = getCMSLabel();
@@ -598,29 +522,18 @@ void test(){
   
   TH1F *h16_f1 = getUnmatchedJetRatioHist(f1, "${eta}", "CHEF", kCyan+2);
   TH1F *h16_f2 = getUnmatchedJetRatioHist(f2, "${eta}", "CHEF", kMagenta+1);
-  maxBin1 = h16_f1->GetMaximumBin();
-  maxBinContent1 = h16_f1->GetBinContent(maxBin1);
-  maxBin2 = h16_f2->GetMaximumBin();
-  maxBinContent2 = h16_f2->GetBinContent(maxBin2);
-  maxBinContent = std::max(maxBinContent1, maxBinContent2);
-  h16_f1->SetMaximum(1.5 * maxBinContent);
-  h16_f2->SetMaximum(1.5 * maxBinContent);
+  setTwoHistMaximum(TH1F *h16_f1, TH1F *h16_f2)
   h16_f1->Draw("h");
   h16_f2->Draw("h same");
  
-  TLegend *legend12 = new TLegend(0.3, 0.68, 0.8, 0.88);
-  legend12->SetTextFont(42);
-  legend12->SetLineColor(0);
-  legend12->SetTextSize(0.03);
-  legend12->SetFillColor(0);
-  legend12->AddEntry(h16_f1, file1Spec, "l");
-  legend12->AddEntry(h16_f2, file2Spec, "l");
+  TLegend *legend12 = getHistTLegend(h16_f1, h16_f2, file1Spec, file2Spec)
   legend12->Draw();
   
   TLatex *t12 = getCMSLabel();
   t12->Draw("same");
 
   c12->SaveAs("unmatched_jet_CHEF_compare_2024E_${eta}.pdf");
+  
   
   /* unmatched l1jet CEEF plot */
   std::cout<<"Creating unmatched l1jet CEEF plot"<<std::endl;
@@ -632,23 +545,11 @@ void test(){
   
   TH1F *h17_f1 = getUnmatchedJetRatioHist(f1, "${eta}", "CEEF", kCyan+2);
   TH1F *h17_f2 = getUnmatchedJetRatioHist(f2, "${eta}", "CEEF", kMagenta+1);
-  maxBin1 = h17_f1->GetMaximumBin();
-  maxBinContent1 = h17_f1->GetBinContent(maxBin1);
-  maxBin2 = h17_f2->GetMaximumBin();
-  maxBinContent2 = h17_f2->GetBinContent(maxBin2);
-  maxBinContent = std::max(maxBinContent1, maxBinContent2);
-  h17_f1->SetMaximum(1.5 * maxBinContent);
-  h17_f2->SetMaximum(1.5 * maxBinContent);
+  setTwoHistMaximum(TH1F *h17_f1, TH1F *h17_f2)
   h17_f1->Draw("h");
   h17_f2->Draw("h same");
  
-  TLegend *legend13 = new TLegend(0.3, 0.68, 0.8, 0.88);
-  legend13->SetTextFont(42);
-  legend13->SetLineColor(0);
-  legend13->SetTextSize(0.03);
-  legend13->SetFillColor(0);
-  legend13->AddEntry(h17_f1, file1Spec, "l");
-  legend13->AddEntry(h17_f2, file2Spec, "l");
+  TLegend *legend13 = getHistTLegend(h17_f1, h17_f2, file1Spec, file2Spec)
   legend13->Draw();
   
   TLatex *t13 = getCMSLabel();
