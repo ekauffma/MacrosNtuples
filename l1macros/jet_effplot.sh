@@ -46,7 +46,7 @@ void test(){
   c1->Draw();
   gStyle->SetOptStat(0);
 
-  TFile *f1 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/240712/Run2024E_withHCALTP_L1EmulJet.root");
+  TFile *f1 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/240712/Run2024E_withHCALTP_L1Jet.root");
   TH1F *h1 = (TH1F*)f1->Get("h_Jet_plots_${eta}");
   h1->GetYaxis()->SetTitle("Efficiency");
   h1->GetYaxis()->SetTitleOffset(1.1);

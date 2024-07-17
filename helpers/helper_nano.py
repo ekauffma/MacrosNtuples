@@ -456,12 +456,12 @@ def makehistos_offlinejetetaoverplateau(df, binning_eta, binning_pt, binning_fra
         
         df_etarange = df.Define('inEtaRange','abs({})>={}'.format('unmatchedJet_Eta', region[0])+'&&abs({})<{}'.format('unmatchedJet_Eta', region[1]))
         
-        histos['h_'+str_bineta+'_JetPt'] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_JetPt_{str_bineta}', '', len(binning_pt)-1, binning_pt), 'unmatchedJet_Pt')
+        histos['h_'+str_bineta+'_JetPt'] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_unmatchedJetPt_{str_bineta}', '', len(binning_pt)-1, binning_pt), 'unmatchedJet_Pt')
         histos['h_'+str_bineta+'_JetNHEF'] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_unmatchedJetNHEF_{str_bineta}', '', len(binning_fraction)-1, binning_fraction), 'unmatchedJet_NHEF')
         histos['h_'+str_bineta+'_JetNEEF'] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_unmatchedJetNEEF_{str_bineta}', '', len(binning_fraction)-1, binning_fraction), 'unmatchedJet_NEEF')
         histos['h_'+str_bineta+'_JetCHEF'] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_unmatchedJetCHEF_{str_bineta}', '', len(binning_fraction)-1, binning_fraction), 'unmatchedJet_CHEF')
         histos['h_'+str_bineta+'_JetCEEF'] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_unmatchedJetCEEF_{str_bineta}', '', len(binning_fraction)-1, binning_fraction), 'unmatchedJet_CEEF')
-        histos['h_'+str_bineta+'_JetCEEF'] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_unmatchedJetCEEF_{str_bineta}', '', len(binning_fraction)-1, binning_fraction), 'unmatchedJet_CEEF')
+        histos['h_'+str_bineta+'_JetMUEF'] = df_etarange.Histo1D(ROOT.RDF.TH1DModel(f'h_unmatchedJetMUEF_{str_bineta}', '', len(binning_fraction)-1, binning_fraction), 'unmatchedJet_MUEF')
     
     return histos
 
