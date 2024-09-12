@@ -46,11 +46,11 @@ void setCanvasOptions(TCanvas* canvas) {
 }
 
 void setTwoHistMaximum(TH1F *hist1, TH1F *hist2, double maxRatio = 1.5){
-  maxBin1 = hist1->GetMaximumBin();
-  maxBinContent1 = hist1->GetBinContent(maxBin1);
-  maxBin2 = hist2->GetMaximumBin();
-  maxBinContent2 = hist2->GetBinContent(maxBin2);
-  maxBinContent = std::max(maxBinContent1, maxBinContent2);
+  int maxBin1 = hist1->GetMaximumBin();
+  int maxBinContent1 = hist1->GetBinContent(maxBin1);
+  int maxBin2 = hist2->GetMaximumBin();
+  int maxBinContent2 = hist2->GetBinContent(maxBin2);
+  int maxBinContent = std::max(maxBinContent1, maxBinContent2);
   hist1->SetMaximum(maxRatio * maxBinContent);
   hist2->SetMaximum(maxRatio * maxBinContent);
 }
@@ -145,7 +145,7 @@ TH1F* getJetPtHist(TFile *file, const char* etarange, int histColor){
   hist->GetYaxis()->SetTitleOffset(1.1);
   hist->GetXaxis()->SetRangeUser(0., 700.);
   hist->GetXaxis()->SetTitle("Leading Jet Pt [GeV]");
-  hist->SetLineColor(histColor;
+  hist->SetLineColor(histColor);
   hist->SetMarkerColor(histColor);
   hist->SetMarkerSize(0.5);
   hist->SetMarkerStyle(8);
@@ -170,7 +170,8 @@ TH1F* getUnmatchedJetEtaHist(TFile *file, int histColor){
 }
 
 TH1F* getUnmatchedJetPtHist(TFile *file, const char* etarange, int histColor){
-  std::string hist_name = std::string("h_JetPt_") + etarange;
+  std::string hist_name = std::string("h_unmatchedJetPt_") + etarange;
+  std::cout<<hist_name<<std::endl;
   TH1F *hist = (TH1F*)file->Get(hist_name.c_str());
   hist->GetYaxis()->SetTitle("Counts");
   hist->GetYaxis()->SetTitleOffset(1.1);
@@ -205,8 +206,8 @@ TH1F* getUnmatchedJetRatioHist(TFile *file, const char* etarange, const char* ra
 
 void test(){
 
-  TFile *f1 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/240712/Run2024E_withHCALTP_L1Jet.root");
-  TFile *f2 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/240712/Run2024E_withHCALTP_L1EmulJet.root");
+  TFile *f1 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/240909/output.root");
+  TFile *f2 = TFile::Open("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/ekauffma/NANOAOD/240909/output_reemul.root");
   char file1Spec[] = "L1Jet";
   char file2Spec[] = "L1EmulJet";
   
@@ -357,11 +358,11 @@ void test(){
   
   TH1F *h9_f1 = getMuonJetMassHist(f1, "${eta}", kCyan+2);
   TH1F *h9_f2 = getMuonJetMassHist(f2, "${eta}", kMagenta+1);
-  setTwoHistMaximum(TH1F *h9_f1, TH1F *h9_f2, maxRatio = 1.3)
+  setTwoHistMaximum(h9_f1, h9_f2, 1.3);
   h9_f1->Draw("epc");
   h9_f2->Draw("epc same");
   
-  TLegend *legend5 = getHistTLegend(h9_f1, h9_f2, file1Spec, file2Spec)
+  TLegend *legend5 = getHistTLegend(h9_f1, h9_f2, file1Spec, file2Spec);
   legend5->Draw();
   
   TLatex *t5 = getCMSLabel();
@@ -386,7 +387,7 @@ void test(){
   h10_f1->Draw("ep");
   h10_f2->Draw("ep same");
  
-  TLegend *legend6 = getHistTLegend(h10_f1, h10_f2, file1Spec, file2Spec)
+  TLegend *legend6 = getHistTLegend(h10_f1, h10_f2, file1Spec, file2Spec);
   legend6->Draw();
   
   TLatex *t6 = getCMSLabel();
@@ -404,13 +405,13 @@ void test(){
   c7->Draw();
   gStyle->SetOptStat(0);
   
-  TH1F *h11_f1 = getJetPtHist(f1, "${eta}", kCyan+2, kMagenta+1);
-  TH1F *h11_f2 = getJetPtHist(f2, "${eta}", );
-  setTwoHistMaximum(TH1F *h11_f1, TH1F *h11_f2, maxRatio = 1.3)
+  TH1F *h11_f1 = getJetPtHist(f1, "${eta}", kCyan+2);
+  TH1F *h11_f2 = getJetPtHist(f2, "${eta}", kMagenta+1);
+  setTwoHistMaximum(h11_f1, h11_f2, 1.3);
   h11_f1->Draw("epc");
   h11_f2->Draw("epc same");
  
-  TLegend *legend7 = getHistTLegend(h11_f1, h11_f2, file1Spec, file2Spec)
+  TLegend *legend7 = getHistTLegend(h11_f1, h11_f2, file1Spec, file2Spec);
   legend7->Draw();
   
   TLatex *t7 = getCMSLabel();
@@ -430,11 +431,11 @@ void test(){
   
   TH1F *h12_f1 = getUnmatchedJetEtaHist(f1, kCyan+2);
   TH1F *h12_f2 = getUnmatchedJetEtaHist(f2, kMagenta+1);
-  setTwoHistMaximum(TH1F *h12_f1, TH1F *h12_f2, maxRatio = 1.3)
+  setTwoHistMaximum(h12_f1, h12_f2, 1.3);
   h12_f1->Draw("h");
   h12_f2->Draw("h same");
  
-  TLegend *legend8 = getHistTLegend(h12_f1, h12_f2, file1Spec, file2Spec)
+  TLegend *legend8 = getHistTLegend(h12_f1, h12_f2, file1Spec, file2Spec);
   legend8->Draw();
   
   TLatex *t8 = getCMSLabel();
@@ -453,11 +454,11 @@ void test(){
   
   TH1F *h13_f1 = getUnmatchedJetPtHist(f1, "${eta}", kCyan+2);
   TH1F *h13_f2 = getUnmatchedJetPtHist(f2, "${eta}", kMagenta+1);
-  setTwoHistMaximum(TH1F *h13_f1, TH1F *h13_f2)
+  setTwoHistMaximum(h13_f1, h13_f2);
   h13_f1->Draw("h");
   h13_f2->Draw("h same");
  
-  TLegend *legend9 = getHistTLegend(h13_f1, h13_f2, file1Spec, file2Spec)
+  TLegend *legend9 = getHistTLegend(h13_f1, h13_f2, file1Spec, file2Spec);
   legend9->Draw();
   
   TLatex *t9 = getCMSLabel();
@@ -476,11 +477,11 @@ void test(){
   
   TH1F *h14_f1 = getUnmatchedJetRatioHist(f1, "${eta}", "NHEF", kCyan+2);
   TH1F *h14_f2 = getUnmatchedJetRatioHist(f2, "${eta}", "NHEF", kMagenta+1);
-  setTwoHistMaximum(TH1F *h14_f1, TH1F *h14_f2)
+  setTwoHistMaximum(h14_f1, h14_f2);
   h14_f1->Draw("h");
   h14_f2->Draw("h same");
  
-  TLegend *legend10 = getHistTLegend(h14_f1, h14_f2, file1Spec, file2Spec)
+  TLegend *legend10 = getHistTLegend(h14_f1, h14_f2, file1Spec, file2Spec);
   legend10->Draw();
   
   TLatex *t10 = getCMSLabel();
@@ -499,11 +500,11 @@ void test(){
   
   TH1F *h15_f1 = getUnmatchedJetRatioHist(f1, "${eta}", "NEEF", kCyan+2);
   TH1F *h15_f2 = getUnmatchedJetRatioHist(f2, "${eta}", "NEEF", kMagenta+1);
-  setTwoHistMaximum(TH1F *h15_f1, TH1F *h15_f2)
+  setTwoHistMaximum(h15_f1, h15_f2);
   h15_f1->Draw("h");
   h15_f2->Draw("h same");
  
-  TLegend *legend11 = getHistTLegend(h15_f1, h15_f2, file1Spec, file2Spec)
+  TLegend *legend11 = getHistTLegend(h15_f1, h15_f2, file1Spec, file2Spec);
   legend11->Draw();
   
   TLatex *t11 = getCMSLabel();
@@ -522,11 +523,11 @@ void test(){
   
   TH1F *h16_f1 = getUnmatchedJetRatioHist(f1, "${eta}", "CHEF", kCyan+2);
   TH1F *h16_f2 = getUnmatchedJetRatioHist(f2, "${eta}", "CHEF", kMagenta+1);
-  setTwoHistMaximum(TH1F *h16_f1, TH1F *h16_f2)
+  setTwoHistMaximum(h16_f1, h16_f2);
   h16_f1->Draw("h");
   h16_f2->Draw("h same");
  
-  TLegend *legend12 = getHistTLegend(h16_f1, h16_f2, file1Spec, file2Spec)
+  TLegend *legend12 = getHistTLegend(h16_f1, h16_f2, file1Spec, file2Spec);
   legend12->Draw();
   
   TLatex *t12 = getCMSLabel();
@@ -545,17 +546,41 @@ void test(){
   
   TH1F *h17_f1 = getUnmatchedJetRatioHist(f1, "${eta}", "CEEF", kCyan+2);
   TH1F *h17_f2 = getUnmatchedJetRatioHist(f2, "${eta}", "CEEF", kMagenta+1);
-  setTwoHistMaximum(TH1F *h17_f1, TH1F *h17_f2)
+  setTwoHistMaximum(h17_f1, h17_f2);
   h17_f1->Draw("h");
   h17_f2->Draw("h same");
  
-  TLegend *legend13 = getHistTLegend(h17_f1, h17_f2, file1Spec, file2Spec)
+  TLegend *legend13 = getHistTLegend(h17_f1, h17_f2, file1Spec, file2Spec);
   legend13->Draw();
   
   TLatex *t13 = getCMSLabel();
   t13->Draw("same");
 
   c13->SaveAs("unmatched_jet_CEEF_compare_2024E_${eta}.pdf");
+
+  /* unmatched l1jet MUEF plot */
+  std::cout<<"Creating unmatched l1jet MUEF plot"<<std::endl;
+                                                                             
+  TCanvas *c14 =new TCanvas("c14", " ", 0, 0, 700, 800);
+  setCanvasOptions(c14);
+  c14->Draw();
+  gStyle->SetOptStat(0);
+  
+  TH1F *h18_f1 = getUnmatchedJetRatioHist(f1, "${eta}", "MUEF", kCyan+2);
+  TH1F *h18_f2 = getUnmatchedJetRatioHist(f2, "${eta}", "MUEF", kMagenta+1);
+  setTwoHistMaximum(h18_f1, h18_f2);
+  h18_f1->Draw("h");
+  h18_f2->Draw("h same");
+                                                                             
+  TLegend *legend14 = getHistTLegend(h18_f1, h18_f2, file1Spec, file2Spec);
+  legend14->Draw();
+  
+  TLatex *t14 = getCMSLabel();
+  t14->Draw("same");
+                                                                             
+  c14->SaveAs("unmatched_jet_MUEF_compare_2024E_${eta}.pdf");
+
+
 }
 
 EOF
